@@ -7,7 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
 import { UsersController } from './users/users.controller';
-import { RolesController } from './roles/roles.controller';
+import { RoleController } from './roles/roles.controller';
 import { AuthController } from './auth/auth.controller';
 
 @Module({
@@ -30,6 +30,6 @@ import { AuthController } from './auth/auth.controller';
     AuthModule,
   ],
   providers: [AuthService],
-  controllers: [UsersController, RolesController, AuthController],
+  controllers: [UsersController, RoleController, AuthController],
 })
 export class AppModule {}
