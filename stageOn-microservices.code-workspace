@@ -1,5 +1,6 @@
 {
 "folders": [
+    { "path": "stageon-microservices" },
     { "path": "services/booking-service" },
     { "path": "services/email-service" },
     { "path": "services/event-service" },
