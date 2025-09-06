@@ -13,6 +13,7 @@ Este monorepo contiene los microservicios para la gestión de salas de teatro:
 - **Venue Service** → Gestión de salas, localidades y sectores
 
 ## Tecnologías
+
 - [NestJS](https://nestjs.com/)
 - [MySQL](https://www.mysql.com/)
 - Docker / Docker Compose

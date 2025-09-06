@@ -1,5 +1,5 @@
 {
-"folders": [
+  "folders": [
     { "path": "stageon-microservices" },
     { "path": "services/booking-service" },
     { "path": "services/email-service" },
@@ -10,10 +10,12 @@
     { "path": "services/pricing-service" },
     { "path": "services/report-service" },
     { "path": "services/venue-service" },
-    { "path": "libs" }
+    { "path": "libs" },
   ],
   "settings": {
     "files.exclude": {
       "**/node_modules": true,
-      "**/dist": true
-    }}
+      "**/dist": true,
+    },
+  },
+}
