@@ -17,6 +17,17 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @UseGuards(JwtAuthGuard)
+  @Post(':id/role')
+  async addRole(@Param('id') id: string, @Body('role') role: string) {
+    try {
+      return await this.usersService.addRole(id, role);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error('Failed to assign role: ' + message);
+    }
+  }
+
   @Post()
   async create(@Body() dto: CreateUserDto) {
     try {

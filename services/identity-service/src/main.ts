@@ -3,11 +3,19 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as dotenv from 'dotenv';
+import * as fs from 'fs';
 
 dotenv.config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const httpsOptions: {
+    pfx: Buffer;
+    passphrase: string;
+  } = {
+    pfx: fs.readFileSync(process.env.PFX_PATH || 'dev.pfx'),
+    passphrase: process.env.PFX_PASSPHRASE || '',
+  };
+  const app = await NestFactory.create(AppModule, { httpsOptions });
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Identity Service API')
