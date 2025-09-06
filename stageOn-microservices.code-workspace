@@ -1,8 +1,18 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
-}
+"folders": [
+    { "path": "services/booking-service" },
+    { "path": "services/email-service" },
+    { "path": "services/event-service" },
+    { "path": "services/identity-service" },
+    { "path": "services/notification-service" },
+    { "path": "services/payment-service" },
+    { "path": "services/pricing-service" },
+    { "path": "services/report-service" },
+    { "path": "services/venue-service" },
+    { "path": "libs" }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true
+    }}
