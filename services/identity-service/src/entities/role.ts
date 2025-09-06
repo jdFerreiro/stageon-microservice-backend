@@ -15,6 +15,9 @@ export class Role {
   @Column({ unique: true })
   name: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   @ManyToMany(() => User)
   @JoinTable()
   users: User[];

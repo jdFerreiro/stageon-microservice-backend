@@ -6,8 +6,9 @@ import { Role } from './entities/role';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthService } from './auth/auth.service';
-import { UserController } from './user/user.controller';
-import { RoleController } from './role/role.controller';
+import { UsersController } from './users/users.controller';
+import { RolesController } from './roles/roles.controller';
+import { AuthController } from './auth/auth.controller';
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { RoleController } from './role/role.controller';
     AuthModule,
   ],
   providers: [AuthService],
-  controllers: [UserController, RoleController],
+  controllers: [UsersController, RolesController, AuthController],
 })
 export class AppModule {}
