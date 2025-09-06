@@ -3,6 +3,7 @@ import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -22,6 +23,12 @@ describe('UsersController', () => {
             remove: jest.fn(),
           },
         },
+        {
+          provide: JwtService,
+          useValue: {
+            verify: jest.fn(), // mockea los métodos que uses en el guard
+          },
+        },
       ],
     }).compile();
 
@@ -37,8 +44,8 @@ describe('UsersController', () => {
     const dto: CreateUserDto = {
       email: 'test@mail.com',
       password: '12345678',
-      lastName: 'User',
       firstName: 'Test',
+      lastName: 'User',
     };
     (service.create as jest.Mock).mockResolvedValue({ id: '1', ...dto });
     expect(await controller.create(dto)).toEqual({ id: '1', ...dto });

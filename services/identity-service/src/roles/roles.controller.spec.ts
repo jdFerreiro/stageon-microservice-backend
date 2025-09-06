@@ -3,6 +3,7 @@ import { RoleController } from './roles.controller';
 import { RoleService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { JwtService } from '@nestjs/jwt';
 
 describe('RoleController', () => {
   let controller: RoleController;
@@ -20,6 +21,12 @@ describe('RoleController', () => {
             findOne: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
+          },
+        },
+        {
+          provide: JwtService,
+          useValue: {
+            verify: jest.fn(), // mockea los métodos que uses en el guard
           },
         },
       ],

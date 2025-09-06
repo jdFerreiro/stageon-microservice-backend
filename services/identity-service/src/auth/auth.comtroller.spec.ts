@@ -4,19 +4,22 @@ import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
+let loginMock: jest.Mock;
+let registerMock: jest.Mock;
 describe('AuthController', () => {
   let controller: AuthController;
-  let authService: AuthService;
 
   beforeEach(async () => {
+    loginMock = jest.fn();
+    registerMock = jest.fn();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
         {
           provide: AuthService,
           useValue: {
-            login: jest.fn(),
-            register: jest.fn(),
+            login: loginMock,
+            register: registerMock,
             getProfile: jest.fn(),
           },
         },
@@ -24,7 +27,6 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
-    authService = module.get<AuthService>(AuthService);
   });
 
   it('debería estar definido', () => {
@@ -37,13 +39,13 @@ describe('AuthController', () => {
         access_token: 'jwt-token',
         user: { id: 1, name: 'David' },
       };
-      jest.spyOn(authService, 'login').mockResolvedValue(mockResult);
+      loginMock.mockResolvedValue(mockResult);
 
       const dto: LoginDto = { email: 'test@mail.com', password: '123456' };
       const result = await controller.login(dto);
 
       expect(result).toEqual(mockResult);
-      expect(authService.login(dto)).toHaveBeenCalledWith(dto);
+      expect(loginMock).toHaveBeenCalledWith(dto);
     });
   });
 
@@ -52,7 +54,7 @@ describe('AuthController', () => {
       const mockResult = {
         access_token: 'jwt-token',
       };
-      jest.spyOn(authService, 'register').mockResolvedValue(mockResult);
+      registerMock.mockResolvedValue(mockResult);
 
       const dto: RegisterDto = {
         email: 'test@mail.com',
@@ -63,7 +65,7 @@ describe('AuthController', () => {
       const result = await controller.register(dto);
 
       expect(result).toEqual(mockResult);
-      expect(authService.register(dto)).toHaveBeenCalledWith(dto);
+      expect(registerMock).toHaveBeenCalledWith(dto);
     });
   });
 });

@@ -5,14 +5,23 @@ import { User } from './entities/user';
 import { Role } from './entities/role';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthService } from './auth/auth.service';
-import { UsersController } from './users/users.controller';
-import { RoleController } from './roles/roles.controller';
 import { AuthController } from './auth/auth.controller';
+import { JwtModule } from '@nestjs/jwt';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: config.get<string>('JWT_EXPIRES_IN') || '3600s',
+        },
+      }),
+    }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -28,8 +37,8 @@ import { AuthController } from './auth/auth.controller';
     }),
     UsersModule,
     AuthModule,
+    RolesModule,
   ],
-  providers: [AuthService],
-  controllers: [UsersController, RoleController, AuthController],
+  controllers: [AuthController],
 })
 export class AppModule {}
