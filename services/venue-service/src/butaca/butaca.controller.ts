@@ -12,7 +12,10 @@ import { ButacaService } from './butaca.service';
 import { CreateButacaDto } from './dto/create-butaca.dto';
 import { UpdateButacaDto } from './dto/update-butaca.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('jwt')
+@ApiTags('butaca')
 @UseGuards(AuthGuard('jwt'))
 @Controller('butaca')
 export class ButacaController {

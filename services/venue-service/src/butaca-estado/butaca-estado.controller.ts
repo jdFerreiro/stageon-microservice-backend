@@ -12,7 +12,10 @@ import { ButacaEstadoService } from './butaca-estado.service';
 import { CreateButacaEstadoDto } from './dto/create-butaca-estado.dto';
 import { UpdateButacaEstadoDto } from './dto/update-butaca-estado.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('jwt')
+@ApiTags('butaca-estado')
 @UseGuards(AuthGuard('jwt'))
 @Controller('butaca-estado')
 export class ButacaEstadoController {

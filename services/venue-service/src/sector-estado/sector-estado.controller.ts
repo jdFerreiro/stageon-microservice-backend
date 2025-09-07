@@ -12,7 +12,10 @@ import { SectorEstadoService } from './sector-estado.service';
 import { CreateSectorEstadoDto } from './dto/create-sector-estado.dto';
 import { UpdateSectorEstadoDto } from './dto/update-sector-estado.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('jwt')
+@ApiTags('sector-estado')
 @UseGuards(AuthGuard('jwt'))
 @Controller('sector-estado')
 export class SectorEstadoController {

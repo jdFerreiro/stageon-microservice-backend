@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { AuthController } from './auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { RolesModule } from './roles/roles.module';
+import { UsersController } from './users/users.controller';
+import { RoleController } from './roles/roles.controller';
 
 @Module({
   imports: [
@@ -39,6 +41,6 @@ import { RolesModule } from './roles/roles.module';
     AuthModule,
     RolesModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UsersController, RoleController],
 })
 export class AppModule {}

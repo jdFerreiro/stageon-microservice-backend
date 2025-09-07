@@ -12,7 +12,10 @@ import { MapaSalaService } from './mapasala.service';
 import { CreateMapaSalaDto } from './dto/create-mapasala.dto';
 import { UpdateMapaSalaDto } from './dto/update-mapasala.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('jwt')
+@ApiTags('mapasala')
 @UseGuards(AuthGuard('jwt'))
 @Controller('mapasala')
 export class MapaSalaController {

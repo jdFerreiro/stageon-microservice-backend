@@ -19,14 +19,24 @@ async function bootstrap() {
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Identity Service API')
-    .setDescription('API documentation for Identity Service')
+    .setDescription('API for managing identity-related entities')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http' as const,
+        scheme: 'bearer' as const,
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header' as const,
+      },
+      'jwt', // This name ('jwt') should match the one used in @ApiBearerAuth() decorator
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/api', app, document);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-  await app.listen(process.env.PORT || 3001);
-  console.log(`Identity Service running on port ${process.env.PORT || 3001}`);
+  await app.listen(process.env.PORT || 7010);
+  console.log(`Identity Service running on port ${process.env.PORT || 7010}`);
 }
 void bootstrap();

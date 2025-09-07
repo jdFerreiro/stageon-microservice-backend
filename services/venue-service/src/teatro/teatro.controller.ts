@@ -12,7 +12,10 @@ import { TeatroService } from './teatro.service';
 import { CreateTeatroDto } from './dto/create-teatro.dto';
 import { UpdateTeatroDto } from './dto/update-teatro.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiBearerAuth('jwt')
+@ApiTags('teatro')
 @UseGuards(AuthGuard('jwt'))
 @Controller('teatro')
 export class TeatroController {
