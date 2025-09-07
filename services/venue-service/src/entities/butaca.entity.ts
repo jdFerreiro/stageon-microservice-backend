@@ -21,7 +21,4 @@ export class Butaca {
 
   @ManyToOne(() => ButacaStatus, (status) => status.butacas)
   status: ButacaStatus;
-
-  @Column({ default: false })
-  isAccessible: boolean;
 }

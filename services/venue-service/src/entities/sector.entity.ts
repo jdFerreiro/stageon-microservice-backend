@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { Sala } from './sala.entity';
 import { Butaca } from './butaca.entity';
-import { MaxLength } from 'class-validator';
+import { IsOptional, MaxLength } from 'class-validator';
 import { SectorStatus } from './sector-estado.entity';
 
 @Entity()
@@ -30,6 +30,10 @@ export class Sector {
 
   @Column({ type: 'decimal', precision: 18, scale: 2, nullable: false })
   price: number;
+
+  @Column({ type: 'decimal', precision: 18, scale: 2, nullable: false })
+  @IsOptional()
+  discount?: number;
 
   @ManyToOne(() => SectorStatus, (status) => status.sectores)
   status: SectorStatus;

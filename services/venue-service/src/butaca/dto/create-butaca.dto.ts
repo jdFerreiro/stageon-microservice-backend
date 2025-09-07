@@ -1,15 +1,8 @@
-import {
-  IsString,
-  IsBoolean,
-  IsOptional,
-  IsUUID,
-  MaxLength,
-} from 'class-validator';
+import { IsString, IsUUID, MaxLength, IsNumber } from 'class-validator';
 
 export class CreateButacaDto {
   @IsUUID()
-  @IsOptional()
-  sectorId?: string;
+  sectorId: string;
 
   @IsString()
   @MaxLength(10)
@@ -19,10 +12,6 @@ export class CreateButacaDto {
   @MaxLength(10)
   number: string;
 
-  @IsUUID()
-  statusId?: number;
-
-  @IsBoolean()
-  @IsOptional()
-  isAccessible?: boolean;
+  @IsNumber()
+  statusId: number;
 }
