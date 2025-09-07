@@ -1,26 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTeatroDto } from './dto/create-teatro.dto';
 import { UpdateTeatroDto } from './dto/update-teatro.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Teatro } from 'src/entities/teatro.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class TeatroService {
-  create(createTeatroDto: CreateTeatroDto) {
-    return 'This action adds a new teatro';
+  constructor(
+    @InjectRepository(Teatro)
+    private readonly teatroRepo: Repository<Teatro>,
+  ) {}
+
+  async create(createTeatroDto: CreateTeatroDto) {
+    const teatro = this.teatroRepo.create(createTeatroDto);
+    return this.teatroRepo.save(teatro);
   }
 
   findAll() {
-    return `This action returns all teatro`;
+    return this.teatroRepo.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} teatro`;
+  async findOne(id: string) {
+    const teatro = await this.teatroRepo.findOneBy({ id });
+    if (!teatro) {
+      throw new NotFoundException(`Teatro with id ${id} not found`);
+    }
+    return teatro;
   }
 
-  update(id: number, updateTeatroDto: UpdateTeatroDto) {
-    return `This action updates a #${id} teatro`;
+  async update(id: string, updateTeatroDto: UpdateTeatroDto) {
+    const teatro = await this.teatroRepo.findOneBy({ id });
+    if (!teatro) {
+      throw new NotFoundException(`Teatro with id ${id} not found`);
+    }
+    this.teatroRepo.merge(teatro, updateTeatroDto);
+    return this.teatroRepo.save(teatro);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} teatro`;
+  async remove(id: string) {
+    const teatro = await this.teatroRepo.findOneBy({ id });
+    if (!teatro) {
+      throw new NotFoundException(`Teatro with id ${id} not found`);
+    }
+    return await this.teatroRepo.remove(teatro);
   }
 }
