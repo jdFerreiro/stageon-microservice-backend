@@ -4,7 +4,7 @@ import { MaxLength } from 'class-validator';
 
 @Entity()
 export class ButacaStatus {
-  @PrimaryGeneratedColumn('identity')
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @Column()

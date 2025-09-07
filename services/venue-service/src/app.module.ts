@@ -45,13 +45,13 @@ import { SectorEstadoController } from './sector-estado/sector-estado.controller
     SectorEstadoModule,
   ],
   controllers: [
-    TeatroController,
-    ButacaController,
     ButacaEstadoController,
-    MapaSalaController,
-    SalaController,
-    SectorController,
     SectorEstadoController,
+    TeatroController,
+    SalaController,
+    MapaSalaController,
+    SectorController,
+    ButacaController,
   ],
   providers: [AppService],
 })

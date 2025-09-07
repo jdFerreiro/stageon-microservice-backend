@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ButacaController } from './butaca.controller';
 import { ButacaService } from './butaca.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Butaca } from 'src/entities/butaca.entity';
+import { Butaca } from '../entities/butaca.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Butaca])],

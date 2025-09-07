@@ -1,6 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Butaca } from 'src/entities/butaca.entity';
+import { Butaca } from '../entities/butaca.entity';
 import { Repository } from 'typeorm';
 import { CreateButacaDto } from './dto/create-butaca.dto';
 import { UpdateButacaDto } from './dto/update-butaca.dto';

@@ -15,7 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth('jwt')
-@ApiTags('sector')
+@ApiTags('Sectores')
 @UseGuards(AuthGuard('jwt'))
 @Controller('sector')
 export class SectorController {

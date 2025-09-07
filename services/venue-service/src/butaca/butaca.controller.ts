@@ -15,7 +15,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiBearerAuth('jwt')
-@ApiTags('butaca')
+@ApiTags('Butacas')
 @UseGuards(AuthGuard('jwt'))
 @Controller('butaca')
 export class ButacaController {
