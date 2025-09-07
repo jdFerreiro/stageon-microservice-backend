@@ -6,6 +6,7 @@ import { TeatroModule } from './teatro/teatro.module';
 import { ButacaEstadoModule } from './butaca-estado/butaca-estado.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TeatroController } from './teatro/teatro.controller';
+import { ButacaModule } from './butaca/butaca.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TeatroController } from './teatro/teatro.controller';
     }),
     TeatroModule,
     ButacaEstadoModule,
+    ButacaModule,
   ],
   controllers: [TeatroController, AppController],
   providers: [AppService],

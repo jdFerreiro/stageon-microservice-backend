@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Teatro } from './teatro.entity';
 import { Sector } from './sector.entity';
+import { MaxLength } from 'class-validator';
 
 @Entity()
 export class Sala {
@@ -17,16 +18,14 @@ export class Sala {
   teatro: Teatro;
 
   @Column()
+  @MaxLength(250)
   name: string;
-
-  @Column({ type: 'int', nullable: true })
-  capacity: number;
 
   @Column({ nullable: true })
   description: string;
 
   @Column({ default: true })
-  status: boolean;
+  isactive: boolean;
 
   @OneToMany(() => Sector, (sector) => sector.sala, { cascade: true })
   sectores: Sector[];

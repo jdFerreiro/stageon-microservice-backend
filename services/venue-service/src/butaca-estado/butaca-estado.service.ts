@@ -1,26 +1,62 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateButacaEstadoDto } from './dto/create-butaca-estado.dto';
 import { UpdateButacaEstadoDto } from './dto/update-butaca-estado.dto';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ButacaStatus } from '../entities/butaca-estado.entity';
 
 @Injectable()
 export class ButacaEstadoService {
-  create(_createButacaEstadoDto: CreateButacaEstadoDto) {
-    return 'This action adds a new butaca-estado';
+  constructor(
+    @InjectRepository(ButacaStatus)
+    private readonly repo: Repository<ButacaStatus>,
+  ) {}
+
+  async create(createButacaEstadoDto: CreateButacaEstadoDto) {
+    const existingButacaEstado = await this.repo.findOneBy({
+      name: createButacaEstadoDto.name,
+    });
+    if (existingButacaEstado) {
+      throw new NotFoundException(
+        `Estado de butaca con nombre ${createButacaEstadoDto.name} ya existe`,
+      );
+    }
+    const butacaEstado = this.repo.create(createButacaEstadoDto);
+    return this.repo.save(butacaEstado);
   }
 
-  findAll() {
-    return 'This action returns all butaca-estado';
+  async findAll() {
+    return this.repo.find();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} butaca-estado`;
+  async findOne(id: number) {
+    const butacaEstado = await this.repo.findOneBy({ id });
+    if (!butacaEstado) {
+      throw new NotFoundException(
+        `Estado de butaca con id ${id} no encontrado`,
+      );
+    }
+    return butacaEstado;
   }
 
-  update(id: string, _updateButacaEstadoDto: UpdateButacaEstadoDto) {
-    return `This action updates a #${id} butaca-estado`;
+  async update(id: number, _updateButacaEstadoDto: UpdateButacaEstadoDto) {
+    const butacaEstado = await this.repo.findOneBy({ id });
+    if (!butacaEstado) {
+      throw new NotFoundException(
+        `Estado de butaca con id ${id} no encontrado`,
+      );
+    }
+    this.repo.merge(butacaEstado, _updateButacaEstadoDto);
+    return this.repo.save(butacaEstado);
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} butaca-estado`;
+  async remove(id: number) {
+    const butacaEstado = await this.repo.findOneBy({ id });
+    if (!butacaEstado) {
+      throw new NotFoundException(
+        `Estado de butaca con id ${id} no encontrado`,
+      );
+    }
+    return await this.repo.remove(butacaEstado);
   }
 }

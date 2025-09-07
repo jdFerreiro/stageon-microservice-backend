@@ -7,6 +7,8 @@ import {
 } from 'typeorm';
 import { Sala } from './sala.entity';
 import { Butaca } from './butaca.entity';
+import { MaxLength } from 'class-validator';
+import { SectorStatus } from './sector-estado.entity';
 
 @Entity()
 export class Sector {
@@ -17,16 +19,20 @@ export class Sector {
   sala: Sala;
 
   @Column()
+  @MaxLength(50)
   name: string;
 
-  @Column({ type: 'int', nullable: true })
+  @Column({ type: 'int' })
   capacity: number;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column({ nullable: true })
-  priceCategoryId: string; // referencia al pricing-service
+  @Column({ type: 'decimal', precision: 18, scale: 2, nullable: false })
+  price: number;
+
+  @ManyToOne(() => SectorStatus, (status) => status.sectores)
+  status: SectorStatus;
 
   @OneToMany(() => Butaca, (butaca) => butaca.sector, { cascade: true })
   butacas: Butaca[];

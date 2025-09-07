@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Sector } from './sector.entity';
 import { ButacaStatus } from './butaca-estado.entity';
+import { MaxLength } from 'class-validator';
 
 @Entity()
 export class Butaca {
@@ -11,9 +12,11 @@ export class Butaca {
   sector: Sector;
 
   @Column()
+  @MaxLength(10)
   row: string;
 
   @Column()
+  @MaxLength(10)
   number: string;
 
   @ManyToOne(() => ButacaStatus, (status) => status.butacas)

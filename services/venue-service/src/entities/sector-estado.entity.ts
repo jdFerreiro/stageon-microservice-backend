@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Butaca } from './butaca.entity';
+import { Sector } from './sector.entity';
 import { MaxLength } from 'class-validator';
 
 @Entity()
-export class ButacaStatus {
+export class SectorStatus {
   @PrimaryGeneratedColumn('identity')
   id: number;
 
   @Column()
   @MaxLength(50)
   name: string;
-  // Ej: "Disponible", "Reservada", "Bloqueada", "Fuera de servicio"
+  // Ej: "Activo", "Reservado", "Bloqueado"
 
-  @OneToMany(() => Butaca, (butaca) => butaca.status)
-  butacas: Butaca[];
+  @OneToMany(() => Sector, (sector) => sector.status)
+  sectores: Sector[];
 }
