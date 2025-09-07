@@ -16,12 +16,12 @@ import { MapaSalaController } from './mapa-sala/mapasala.controller';
 import { SalaController } from './sala/sala.controller';
 import { SectorController } from './sector/sector.controller';
 import { SectorEstadoController } from './sector-estado/sector-estado.controller';
+import { AuthModule } from './auth/auth.module';
+import { UserContextModule } from './auth/User/user-context.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    TeatroModule,
-    ButacaEstadoModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
@@ -36,6 +36,8 @@ import { SectorEstadoController } from './sector-estado/sector-estado.controller
         autoLoadEntities: true,
       }),
     }),
+    AuthModule,
+    UserContextModule,
     TeatroModule,
     ButacaEstadoModule,
     ButacaModule,

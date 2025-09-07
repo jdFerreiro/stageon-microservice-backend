@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectRepository(Role)
+    @InjectRepository(Role) 
     private readonly roleRepo: Repository<Role>,
   ) {}
 
@@ -30,6 +30,10 @@ export class UsersService {
     const user = await this.userRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('Usuario no encontrado');
     return user;
+  }
+
+  async findByEmailWithRoles(email: string) {
+    return this.userRepo.findOne({ where: { email }, relations: ['roles'] });
   }
 
   async update(id: string, dto: UpdateUserDto) {

@@ -44,9 +44,8 @@ export class AuthService {
   // Login de usuario
   // -------------------------
   async login(dto: LoginDto) {
-    // Buscar usuario por email
-    const existingUsers = await this.usersService.findAll();
-    const user = existingUsers.find((u) => u.email === dto.email);
+    // Buscar usuario por email con roles
+    const user = await this.usersService.findByEmailWithRoles(dto.email);
     if (!user)
       throw new UnauthorizedException('Email o contraseña incorrectos');
 
@@ -61,8 +60,8 @@ export class AuthService {
       user.email,
       user.firstName,
       user.lastName,
-      user.roles.map((r) => r.id),
-      user.roles.map((r) => r.name),
+      user.roles ? user.roles.map((r) => r.id) : [],
+      user.roles ? user.roles.map((r) => r.name) : [],
     );
   }
 
