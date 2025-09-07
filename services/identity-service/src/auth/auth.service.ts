@@ -56,7 +56,14 @@ export class AuthService {
       throw new UnauthorizedException('Email o contraseña incorrectos');
 
     // Retornar token JWT
-    return this.generateJwt(user.id, user.email, user.firstName, user.lastName);
+    return this.generateJwt(
+      user.id,
+      user.email,
+      user.firstName,
+      user.lastName,
+      user.roles.map((r) => r.id),
+      user.roles.map((r) => r.name),
+    );
   }
 
   // -------------------------
@@ -67,12 +74,16 @@ export class AuthService {
     email: string,
     firstname: string,
     lastname: string,
+    roleIds: string[] = [],
+    roleNames: string[] = [],
   ) {
     const payload = {
       sub: userId,
       email: email,
       firstName: firstname,
       lastName: lastname,
+      roleIds: roleIds,
+      roleNames: roleNames,
     };
     return {
       access_token: this.jwtService.sign(payload, {
