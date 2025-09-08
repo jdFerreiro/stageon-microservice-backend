@@ -16,6 +16,10 @@ async function bootstrap() {
     passphrase: process.env.PFX_PASSPHRASE || '',
   };
   const app = await NestFactory.create(AppModule, { httpsOptions });
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  });
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Identity Service API')
