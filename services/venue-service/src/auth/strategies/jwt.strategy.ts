@@ -13,10 +13,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_SECRET as string,
     });
+    console.log('JWT Strategy initialized');
   }
 
   validate(payload: {
-    id: string;
+    sub: string;
     email: string;
     firstName: string;
     lastName: string;
@@ -25,7 +26,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }) {
     // Guardamos el payload en el objeto global
     this.userContext.setUser({
-      id: payload.id,
+      id: payload.sub,
       email: payload.email,
       firstName: payload.firstName,
       lastName: payload.lastName,
@@ -35,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     // req.user seguirá disponible también
     return {
-      id: payload.id,
+      id: payload.sub,
       email: payload.email,
       firstName: payload.firstName,
       lastName: payload.lastName,

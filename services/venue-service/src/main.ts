@@ -22,7 +22,7 @@ async function bootstrap() {
     .setDescription('API documentation for Venue Service')
     .setVersion('1.0')
     .addBearerAuth(
-      { 
+      {
         type: 'http' as const,
         scheme: 'bearer' as const,
         bearerFormat: 'JWT',
