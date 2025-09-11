@@ -7,6 +7,7 @@ import {
   Patch,
   Delete,
   UseGuards,
+  HttpException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -20,24 +21,18 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(JwtAuthGuard)
-  @Post(':id/role')
-  async addRole(@Param('id') id: string, @Body('role') role: string) {
-    try {
-      return await this.usersService.addRole(id, role);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw new Error('Failed to assign role: ' + message);
-    }
-  }
-
   @Post()
   async create(@Body() dto: CreateUserDto) {
     try {
       return await this.usersService.create(dto);
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      throw new Error('Failed to create user: ' + message);
+    } catch (error: any) {
+      const status = error?.status || 500;
+      const message = error?.message || 'Error desconocido';
+      throw new HttpException({
+        statusCode: status,
+        message,
+        error: 'Failed to create user',
+      }, status);
     }
   }
 

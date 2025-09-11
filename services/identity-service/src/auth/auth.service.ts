@@ -19,7 +19,7 @@ export class AuthService {
   // -------------------------
   async login(dto: LoginDto) {
     // Buscar usuario por email con roles
-    const user = await this.usersService.findByEmailWithRoles(dto.email);
+    const user = await this.usersService.findByEmailWithRole(dto.email);
     if (!user)
       throw new UnauthorizedException('Email o contraseña incorrectos');
 
@@ -34,8 +34,8 @@ export class AuthService {
       user.email,
       user.firstName,
       user.lastName,
-      user.roles ? user.roles.map((r) => r.id) : [],
-      user.roles ? user.roles.map((r) => r.name) : [],
+      user.role ? user.role.id : "" ,
+      user.role ? user.role.name : "",
     );
   }
 
@@ -45,18 +45,18 @@ export class AuthService {
   private generateJwt(
     userId: string,
     email: string,
-    firstname: string,
-    lastname: string,
-    roleIds: string[] = [],
-    roleNames: string[] = [],
+    firstName: string,
+    lastName: string,
+    roleId: string,
+    roleName: string,
   ) {
     const payload = {
       sub: userId,
       email: email,
-      firstName: firstname,
-      lastName: lastname,
-      roleIds: roleIds,
-      roleNames: roleNames,
+      firstName: firstName,
+      lastName: lastName,
+      roleId: roleId,
+      roleName: roleName,
     };
     return {
       access_token: this.jwtService.sign(payload, {

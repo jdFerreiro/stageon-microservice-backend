@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsEmail, IsString, MinLength, MaxLength, IsUUID } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ required: true, description: 'Email del usuario' })
@@ -25,4 +25,8 @@ export class CreateUserDto {
   @MinLength(2, { message: 'El apellido debe tener al menos 2 caracteres' })
   @MaxLength(50, { message: 'El apellido no puede tener más de 50 caracteres' })
   lastName: string;
+
+  @ApiProperty({ required: true, description: 'ID del rol asociado al usuario' })
+  @IsUUID('4', { message: 'El roleId debe ser un UUID válido' })
+  roleId: string;
 }

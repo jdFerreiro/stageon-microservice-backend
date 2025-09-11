@@ -30,21 +30,22 @@ async function seedUsers() {
       lastName: `Example`,
       email: `dummy_${role.name.toLowerCase()}@example.com`,
       passwordHash,
-      roles: [role],
+      isActive: true,
+      role: role,
     };
     let user = await userRepo.findOne({
       where: { email: dummyUser.email },
-      relations: ['roles'],
+      relations: ['role'],
     });
     if (!user) {
       user = userRepo.create(dummyUser);
       await userRepo.save(user);
       console.log(`Usuario dummy creado para rol: ${role.name}`);
     } else {
-      if (!user.roles.some((r) => r.id === role.id)) {
-        user.roles.push(role);
+      if (!user.role || user.role.id !== role.id) {
+        user.role = role;
         await userRepo.save(user);
-        console.log(`Rol ${role.name} asignado a usuario dummy existente.`);
+        console.log(`Rol ${role.name} asignado/actualizado a usuario dummy existente.`);
       } else {
         console.log(`Usuario dummy ya existe y tiene el rol: ${role.name}`);
       }

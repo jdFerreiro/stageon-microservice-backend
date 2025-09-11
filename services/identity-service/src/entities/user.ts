@@ -4,8 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany,
-  JoinTable,
+  ManyToOne,
 } from 'typeorm';
 import { Role } from './role';
 
@@ -35,7 +34,6 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToMany(() => Role)
-  @JoinTable()
-  roles: Role[];
+  @ManyToOne(() => Role, role => role.users, { eager: true })
+  role: Role;
 }
