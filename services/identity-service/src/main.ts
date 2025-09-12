@@ -1,4 +1,5 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from 'nestjs-pino';
 import { Transport } from '@nestjs/microservices';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
@@ -16,7 +17,8 @@ async function bootstrap() {
     pfx: fs.readFileSync(process.env.PFX_PATH || 'dev.pfx'),
     passphrase: process.env.PFX_PASSPHRASE || '',
   };
-  const app = await NestFactory.create(AppModule, { httpsOptions });
+  const app = await NestFactory.create(AppModule, { httpsOptions, bufferLogs: true });
+  app.useLogger(app.get(Logger));
 
   // Configuración RabbitMQ
   app.connectMicroservice({

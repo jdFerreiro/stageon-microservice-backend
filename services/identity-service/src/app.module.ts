@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { LoggerModule } from 'nestjs-pino';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -14,6 +15,15 @@ import { RoleController } from './roles/roles.controller';
 
 @Module({
   imports: [
+    LoggerModule.forRoot({
+      pinoHttp: {
+        level: process.env.LOG_LEVEL || 'info',
+        transport: process.env.NODE_ENV === 'production' ? undefined : {
+          target: 'pino-pretty',
+          options: { colorize: true }
+        },
+      },
+    }),
     ConfigModule.forRoot({ isGlobal: true }),
     ClientsModule.register([
       {
