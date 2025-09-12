@@ -46,6 +46,7 @@ describe('UsersController', () => {
       password: '12345678',
       firstName: 'Test',
       lastName: 'User',
+      roleId: 'role-id',
     };
     (service.create as jest.Mock).mockResolvedValue({ id: '1', ...dto });
     expect(await controller.create(dto)).toEqual({ id: '1', ...dto });
