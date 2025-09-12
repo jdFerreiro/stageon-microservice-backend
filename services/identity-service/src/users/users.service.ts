@@ -12,7 +12,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
-    @InjectRepository(Role) 
+    @InjectRepository(Role)
     private readonly roleRepo: Repository<Role>,
   ) {}
 
@@ -29,7 +29,7 @@ export class UsersService {
       passwordHash,
       role,
     });
-    return this.userRepo.save(user);
+  return await this.userRepo.save(user);
   }
 
   async findAll() {
@@ -54,13 +54,13 @@ export class UsersService {
       user.role = role;
     }
     Object.assign(user, dto);
-    await this.userRepo.save(user);
-    return this.findOne(id);
+  await this.userRepo.save(user);
+  return this.findOne(id);
   }
 
   async remove(id: string) {
     const user = await this.findOne(id);
-    return this.userRepo.remove(user);
+  return await this.userRepo.remove(user);
   }
 
   // Opcional: asignar rol por nombre

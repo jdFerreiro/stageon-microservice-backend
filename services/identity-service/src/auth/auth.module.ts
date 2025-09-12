@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
@@ -19,6 +20,19 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
         },
       }),
     }),
+    ClientsModule.register([
+      {
+        name: 'RABBITMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [
+            `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASS}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+          ],
+          queue: process.env.RABBITMQ_QUEUE,
+          queueOptions: { durable: true },
+        },
+      },
+    ]),
   ],
   providers: [AuthService, JwtAuthGuard],
   controllers: [AuthController],
