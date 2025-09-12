@@ -1,5 +1,6 @@
 import { ClientProxy } from '@nestjs/microservices';
 import { Inject, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PinoLogger } from 'nestjs-pino';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,69 +18,141 @@ export class UsersService {
     private readonly roleRepo: Repository<Role>,
     @Inject('RABBITMQ_SERVICE')
     private readonly rabbitClient: ClientProxy,
-  ) {}
+    private readonly logger: PinoLogger,
+  ) {
+    this.logger.setContext(UsersService.name);
+  }
 
   async create(dto: CreateUserDto) {
-    const existing = await this.userRepo.findOne({ where: { email: dto.email } });
-    if (existing) {
-      throw new BadRequestException('El email ya está registrado');
+    this.logger.info('Inicio método create');
+    this.logger.debug({ dto }, 'Payload recibido en create');
+    try {
+      const existing = await this.userRepo.findOne({ where: { email: dto.email } });
+      if (existing) {
+        this.logger.warn({ email: dto.email }, 'Email ya registrado');
+        throw new BadRequestException('El email ya está registrado');
+      }
+      const passwordHash = await bcrypt.hash(dto.password, 10);
+      const role = await this.roleRepo.findOne({ where: { id: dto.roleId } });
+      if (!role) {
+        this.logger.error({ roleId: dto.roleId }, 'Rol no encontrado');
+        throw new NotFoundException('Rol no encontrado');
+      }
+      const user = this.userRepo.create({
+        ...dto,
+        passwordHash,
+        role,
+      });
+      const savedUser = await this.userRepo.save(user);
+      this.rabbitClient.emit('user.created', { id: savedUser.id, email: savedUser.email });
+      this.logger.info('Usuario creado correctamente');
+      this.logger.debug({ savedUser }, 'Detalle del usuario creado');
+      return savedUser;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en create');
+      throw error;
     }
-    const passwordHash = await bcrypt.hash(dto.password, 10);
-    const role = await this.roleRepo.findOne({ where: { id: dto.roleId } });
-    if (!role) throw new NotFoundException('Rol no encontrado');
-    const user = this.userRepo.create({
-      ...dto,
-      passwordHash,
-      role,
-    });
-  const savedUser = await this.userRepo.save(user);
-  // Enviar mensaje a RabbitMQ
-  this.rabbitClient.emit('user.created', { id: savedUser.id, email: savedUser.email });
-  return savedUser;
   }
 
   async findAll() {
-    return this.userRepo.find({ relations: ['role'] });
+    this.logger.info('Inicio método findAll');
+    try {
+      const result = await this.userRepo.find({ relations: ['role'] });
+      this.logger.info('Usuarios obtenidos correctamente');
+      this.logger.debug({ result }, 'Detalle de usuarios obtenidos');
+      return result;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en findAll');
+      throw error;
+    }
   }
 
   async findOne(id: string) {
-    const user = await this.userRepo.findOne({ where: { id }, relations: ['role'] });
-    if (!user) throw new NotFoundException('Usuario no encontrado');
-    return user;
+    this.logger.info(`Inicio método findOne para id: ${id}`);
+    try {
+      const user = await this.userRepo.findOne({ where: { id }, relations: ['role'] });
+      if (!user) {
+        this.logger.warn({ id }, 'Usuario no encontrado');
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      this.logger.info('Usuario obtenido correctamente');
+      this.logger.debug({ user }, 'Detalle del usuario obtenido');
+      return user;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en findOne');
+      throw error;
+    }
   }
 
   async findByEmailWithRole(email: string) {
-    return this.userRepo.findOne({ where: { email }, relations: ['role'] });
+    this.logger.info(`Inicio método findByEmailWithRole para email: ${email}`);
+    try {
+      const user = await this.userRepo.findOne({ where: { email }, relations: ['role'] });
+      this.logger.info('Usuario obtenido por email correctamente');
+      this.logger.debug({ user }, 'Detalle del usuario por email');
+      return user;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en findByEmailWithRole');
+      throw error;
+    }
   }
 
   async update(id: string, dto: UpdateUserDto) {
-    const user = await this.findOne(id);
-    if (dto.roleId) {
-      const role = await this.roleRepo.findOne({ where: { id: dto.roleId } });
-      if (!role) throw new NotFoundException('Rol no encontrado');
-      user.role = role;
+    this.logger.info(`Inicio método update para id: ${id}`);
+    this.logger.debug({ dto }, 'Payload recibido en update');
+    try {
+      const user = await this.findOne(id);
+      if (dto.roleId) {
+        const role = await this.roleRepo.findOne({ where: { id: dto.roleId } });
+        if (!role) {
+          this.logger.error({ roleId: dto.roleId }, 'Rol no encontrado');
+          throw new NotFoundException('Rol no encontrado');
+        }
+        user.role = role;
+      }
+      Object.assign(user, dto);
+      await this.userRepo.save(user);
+      this.rabbitClient.emit('user.updated', { id: user.id, email: user.email });
+      this.logger.info('Usuario actualizado correctamente');
+      return this.findOne(id);
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en update');
+      throw error;
     }
-    Object.assign(user, dto);
-  await this.userRepo.save(user);
-  // Enviar mensaje a RabbitMQ
-  this.rabbitClient.emit('user.updated', { id: user.id, email: user.email });
-  return this.findOne(id);
   }
 
   async remove(id: string) {
-    const user = await this.findOne(id);
-  const result = await this.userRepo.remove(user);
-  // Enviar mensaje a RabbitMQ
-  this.rabbitClient.emit('user.deleted', { id: user.id, email: user.email });
-  return result;
+    this.logger.info(`Inicio método remove para id: ${id}`);
+    try {
+      const user = await this.findOne(id);
+      const result = await this.userRepo.remove(user);
+      this.rabbitClient.emit('user.deleted', { id: user.id, email: user.email });
+      this.logger.info('Usuario eliminado correctamente');
+      return result;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en remove');
+      throw error;
+    }
   }
 
   // Opcional: asignar rol por nombre
   async setRole(userId: string, roleName: string) {
-    const user = await this.findOne(userId);
-    let role = await this.roleRepo.findOne({ where: { name: roleName } });
-    if (!role) role = await this.roleRepo.save({ name: roleName });
-    user.role = role;
-    return this.userRepo.save(user);
+    this.logger.info(`Inicio método setRole para userId: ${userId}, roleName: ${roleName}`);
+    try {
+      const user = await this.findOne(userId);
+      let role = await this.roleRepo.findOne({ where: { name: roleName } });
+      if (!role) {
+        role = await this.roleRepo.save({ name: roleName });
+        this.logger.info({ role }, 'Nuevo rol creado');
+      }
+      user.role = role;
+      const result = await this.userRepo.save(user);
+      this.logger.info('Rol asignado correctamente');
+      this.logger.debug({ result }, 'Detalle del usuario con nuevo rol');
+      return result;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en setRole');
+      throw error;
+    }
   }
 }
