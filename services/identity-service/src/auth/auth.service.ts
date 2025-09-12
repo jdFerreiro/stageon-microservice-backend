@@ -1,7 +1,9 @@
 import {
   Injectable,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
 import bcrypt from 'bcrypt';
@@ -12,6 +14,8 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    @Inject('RABBITMQ_SERVICE')
+    private readonly rabbitClient: ClientProxy,
   ) {}
   
   // -------------------------
@@ -28,6 +32,9 @@ export class AuthService {
     if (!isMatch)
       throw new UnauthorizedException('Email o contraseña incorrectos');
 
+
+    // Enviar mensaje a RabbitMQ
+    this.rabbitClient.emit('user.login', { id: user.id, email: user.email });
 
     // Retornar token JWT
     return this.generateJwt(

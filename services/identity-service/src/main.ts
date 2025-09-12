@@ -1,4 +1,5 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Transport } from '@nestjs/microservices';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -16,6 +17,17 @@ async function bootstrap() {
     passphrase: process.env.PFX_PASSPHRASE || '',
   };
   const app = await NestFactory.create(AppModule, { httpsOptions });
+
+  // Configuración RabbitMQ
+  app.connectMicroservice({
+    transport: Transport.RMQ,
+    options: {
+      urls: [`amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASS}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`],
+      queue: process.env.RABBITMQ_QUEUE,
+      queueOptions: { durable: true },
+    },
+  });
+  await app.startAllMicroservices();
 
   app.enableCors({
     origin: 'http://localhost:5173',

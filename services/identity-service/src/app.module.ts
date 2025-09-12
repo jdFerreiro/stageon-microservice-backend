@@ -15,6 +15,19 @@ import { RoleController } from './roles/roles.controller';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ClientsModule.register([
+      {
+        name: 'RABBITMQ_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: [
+            `amqp://${process.env.RABBITMQ_USER}:${process.env.RABBITMQ_PASS}@${process.env.RABBITMQ_HOST}:${process.env.RABBITMQ_PORT}`,
+          ],
+          queue: process.env.RABBITMQ_QUEUE,
+          queueOptions: { durable: true },
+        },
+      },
+    ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
+import { Inject, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +15,8 @@ export class UsersService {
     private readonly userRepo: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepo: Repository<Role>,
+    @Inject('RABBITMQ_SERVICE')
+    private readonly rabbitClient: ClientProxy,
   ) {}
 
   async create(dto: CreateUserDto) {
@@ -29,7 +32,10 @@ export class UsersService {
       passwordHash,
       role,
     });
-  return await this.userRepo.save(user);
+  const savedUser = await this.userRepo.save(user);
+  // Enviar mensaje a RabbitMQ
+  this.rabbitClient.emit('user.created', { id: savedUser.id, email: savedUser.email });
+  return savedUser;
   }
 
   async findAll() {
@@ -55,12 +61,17 @@ export class UsersService {
     }
     Object.assign(user, dto);
   await this.userRepo.save(user);
+  // Enviar mensaje a RabbitMQ
+  this.rabbitClient.emit('user.updated', { id: user.id, email: user.email });
   return this.findOne(id);
   }
 
   async remove(id: string) {
     const user = await this.findOne(id);
-  return await this.userRepo.remove(user);
+  const result = await this.userRepo.remove(user);
+  // Enviar mensaje a RabbitMQ
+  this.rabbitClient.emit('user.deleted', { id: user.id, email: user.email });
+  return result;
   }
 
   // Opcional: asignar rol por nombre
