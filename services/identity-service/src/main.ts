@@ -32,7 +32,7 @@ async function bootstrap() {
   await app.startAllMicroservices();
 
   app.enableCors({
-    origin: 'http://localhost:5173',
+    origin: true, // Permite cualquier origen
     credentials: true,
   });
   // Swagger config
