@@ -26,6 +26,9 @@
     },
     {
       "path": "services/venue-service"
+    },
+    {
+      "path": "."
     }
   ],
   "settings": {
@@ -33,5 +36,6 @@
       "**/node_modules": true,
       "**/dist": true,
     },
+    "npm-scripts.showStartNotification": false,
   },
 }

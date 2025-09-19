@@ -18,9 +18,13 @@ import { RoleController } from './roles/roles.controller';
     LoggerModule.forRoot({
       pinoHttp: {
         level: process.env.LOG_LEVEL || 'info',
-        transport: process.env.NODE_ENV === 'production' ? undefined : {
-          target: 'pino-pretty',
-          options: { colorize: true }
+        transport: {
+          target: 'pino/file',
+          options: {
+            destination: process.env.LOG_FILE_PATH || './logs/identity-service.log',
+            mkdir: true,
+            // Puedes agregar opciones de rotación con pino/file-rotate si lo deseas
+          },
         },
       },
     }),

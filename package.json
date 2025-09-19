@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:identity": "cd ./services/identity-service && npm run start:dev",
+    "start:venue": "cd ./services/venue-service && npm run start:dev",
+    "start:microservices": "concurrently \"npm run start:identity\" \"npm run start:venue\""
   },
   "keywords": [],
   "author": "",
