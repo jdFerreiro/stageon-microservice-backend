@@ -36,4 +36,11 @@ export class User {
 
   @ManyToOne(() => Role, role => role.users, { eager: true })
   role: Role;
+
+  /**
+   * Indica si el usuario es socio o externo.
+   * Valores posibles: 'socio' | 'externo'
+   */
+  @Column({ type: 'enum', enum: ['socio', 'externo'], default: 'socio' })
+  userType: 'socio' | 'externo';
 }

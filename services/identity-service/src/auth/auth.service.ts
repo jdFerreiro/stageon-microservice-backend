@@ -7,6 +7,7 @@ import { PinoLogger } from 'nestjs-pino';
 import { ClientProxy } from '@nestjs/microservices';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/login.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
@@ -21,7 +22,24 @@ export class AuthService {
   ) {
     this.logger.setContext(AuthService.name);
   }
-  
+
+  // -------------------------
+  // Registro de usuario
+  // -------------------------
+  async register(dto: CreateUserDto) {
+    this.logger.info('Inicio método register');
+    this.logger.debug({ dto }, 'Payload recibido en register');
+    try {
+      const user = await this.usersService.create(dto);
+      this.logger.info('Usuario registrado correctamente');
+      this.logger.debug({ user }, 'Detalle del usuario registrado');
+      return user;
+    } catch (error: any) {
+      this.logger.error({ error }, 'Error en register');
+      throw error;
+    }
+  }
+
   // -------------------------
   // Login de usuario
   // -------------------------
