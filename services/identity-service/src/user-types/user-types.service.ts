@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { UserTypeResponseDto } from './dto/user-type-response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserType } from '../entities/userType';
@@ -12,31 +13,43 @@ export class UserTypesService {
     private readonly userTypeRepo: Repository<UserType>,
   ) {}
 
-  async create(data: CreateUserTypeDto) {
+  async create(data: CreateUserTypeDto): Promise<UserTypeResponseDto> {
     const exists = await this.userTypeRepo.findOne({ where: { name: data.name } });
     if (exists) throw new BadRequestException('El tipo de usuario ya existe');
   const userType = this.userTypeRepo.create(data);
-  return this.userTypeRepo.save(userType);
+    const saved = await this.userTypeRepo.save(userType);
+    return this.toResponseDto(saved);
   }
 
-  async findAll() {
-    return this.userTypeRepo.find();
+  async findAll(): Promise<UserTypeResponseDto[]> {
+    const result = await this.userTypeRepo.find();
+    return result.map(this.toResponseDto);
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<UserTypeResponseDto> {
     const userType = await this.userTypeRepo.findOne({ where: { id } });
     if (!userType) throw new NotFoundException('Tipo de usuario no encontrado');
-    return userType;
+    return this.toResponseDto(userType);
   }
 
-  async update(id: string, data: UpdateUserTypeDto) {
-    const userType = await this.findOne(id);
-    Object.assign(userType, data);
-    return this.userTypeRepo.save(userType);
+  async update(id: string, data: UpdateUserTypeDto): Promise<UserTypeResponseDto> {
+    const userTypeEntity = await this.userTypeRepo.findOne({ where: { id } });
+    if (!userTypeEntity) throw new NotFoundException('Tipo de usuario no encontrado');
+    Object.assign(userTypeEntity, data);
+    const saved = await this.userTypeRepo.save(userTypeEntity);
+    return this.toResponseDto(saved);
   }
 
-  async remove(id: string) {
-    const userType = await this.findOne(id);
-    return this.userTypeRepo.remove(userType);
+  async remove(id: string): Promise<UserTypeResponseDto> {
+    const userTypeEntity = await this.userTypeRepo.findOne({ where: { id } });
+    if (!userTypeEntity) throw new NotFoundException('Tipo de usuario no encontrado');
+    await this.userTypeRepo.remove(userTypeEntity);
+    return this.toResponseDto(userTypeEntity);
+  }
+  private toResponseDto(userType: UserType): UserTypeResponseDto {
+    return {
+      id: userType.id,
+      name: userType.name,
+    };
   }
 }

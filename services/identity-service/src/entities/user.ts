@@ -9,8 +9,6 @@ import {
 } from 'typeorm';
 import { Role } from './role';
 import { UserType } from './userType';
-import { Club } from './club';
-
 import { UserClub } from './userClub';
 
 @Entity('users')

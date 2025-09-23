@@ -12,6 +12,8 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -22,7 +24,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  async create(@Body() dto: CreateUserDto) {
+  @ApiResponse({ status: 201, type: UserResponseDto })
+  async create(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     try {
       return await this.usersService.create(dto);
     } catch (error: any) {
@@ -38,7 +41,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll() {
+  @ApiResponse({ status: 200, type: [UserResponseDto] })
+  async findAll(): Promise<UserResponseDto[]> {
     try {
       return await this.usersService.findAll();
     } catch (error: unknown) {
@@ -49,7 +53,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
     try {
       return await this.usersService.findOne(id);
     } catch (error: unknown) {
@@ -60,7 +65,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async update(@Param('id') id: string, @Body() dto: UpdateUserDto): Promise<UserResponseDto> {
     try {
       return await this.usersService.update(id, dto);
     } catch (error: unknown) {
@@ -71,7 +77,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: UserResponseDto })
+  async remove(@Param('id') id: string): Promise<UserResponseDto> {
     try {
       return await this.usersService.remove(id);
     } catch (error: unknown) {

@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RoleController } from './roles.controller';
-import { RoleService } from './roles.service';
+import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { JwtService } from '@nestjs/jwt';
 
 describe('RoleController', () => {
   let controller: RoleController;
-  let service: RoleService;
+  let service: RolesService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RoleController],
       providers: [
         {
-          provide: RoleService,
+          provide: RolesService,
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
@@ -33,7 +33,7 @@ describe('RoleController', () => {
     }).compile();
 
     controller = module.get<RoleController>(RoleController);
-    service = module.get<RoleService>(RoleService);
+    service = module.get<RolesService>(RolesService);
   });
 
   it('should be defined', () => {

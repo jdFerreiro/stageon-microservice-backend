@@ -4,6 +4,7 @@ import { UpdateClubDto } from './dto/update-club.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ClubsService } from './clubs.service';
+import { ClubResponseDto } from './dto/club-response.dto';
 
 @ApiTags('clubs')
 @ApiBearerAuth('jwt')
@@ -14,40 +15,40 @@ export class ClubsController {
   @UseGuards(JwtAuthGuard)
   @Post()
   @ApiOperation({ summary: 'Crear club' })
-  @ApiResponse({ status: 201, description: 'Club creado.' })
-  create(@Body() data: CreateClubDto) {
+  @ApiResponse({ status: 201, type: ClubResponseDto })
+  create(@Body() data: CreateClubDto): Promise<ClubResponseDto> {
     return this.clubsService.create(data);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get()
   @ApiOperation({ summary: 'Listar todos los clubes' })
-  @ApiResponse({ status: 200, description: 'Lista de clubes.' })
-  findAll() {
+  @ApiResponse({ status: 200, type: [ClubResponseDto] })
+  findAll(): Promise<ClubResponseDto[]> {
     return this.clubsService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un club por ID' })
-  @ApiResponse({ status: 200, description: 'Club encontrado.' })
-  findOne(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: ClubResponseDto })
+  findOne(@Param('id') id: string): Promise<ClubResponseDto> {
     return this.clubsService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar club' })
-  @ApiResponse({ status: 200, description: 'Club actualizado.' })
-  update(@Param('id') id: string, @Body() data: UpdateClubDto) {
+  @ApiResponse({ status: 200, type: ClubResponseDto })
+  update(@Param('id') id: string, @Body() data: UpdateClubDto): Promise<ClubResponseDto> {
     return this.clubsService.update(id, data);
   }
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar club' })
-  @ApiResponse({ status: 200, description: 'Club eliminado.' })
-  remove(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: ClubResponseDto })
+  remove(@Param('id') id: string): Promise<ClubResponseDto> {
     return this.clubsService.remove(id);
   }
 }

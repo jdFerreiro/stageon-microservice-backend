@@ -8,9 +8,11 @@ import {
   Delete,
   UseGuards,
 } from '@nestjs/common';
-import { RoleService } from './roles.service';
+import { RolesService } from './roles.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import { RoleResponseDto } from './dto/role-response.dto';
+import { ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
@@ -18,10 +20,11 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @ApiBearerAuth('jwt')
 @Controller('roles')
 export class RoleController {
-  constructor(private readonly service: RoleService) {}
+  constructor(private readonly service: RolesService) {}
 
   @Post()
-  async create(@Body() dto: CreateRoleDto) {
+  @ApiResponse({ status: 201, type: RoleResponseDto })
+  async create(@Body() dto: CreateRoleDto): Promise<RoleResponseDto> {
     try {
       return await this.service.create(dto);
     } catch (error: unknown) {
@@ -32,7 +35,8 @@ export class RoleController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  async findAll() {
+  @ApiResponse({ status: 200, type: [RoleResponseDto] })
+  async findAll(): Promise<RoleResponseDto[]> {
     try {
       return await this.service.findAll();
     } catch (error: unknown) {
@@ -43,7 +47,8 @@ export class RoleController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: RoleResponseDto })
+  async findOne(@Param('id') id: string): Promise<RoleResponseDto> {
     try {
       return await this.service.findOne(id);
     } catch (error: unknown) {
@@ -54,7 +59,8 @@ export class RoleController {
 
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: UpdateRoleDto) {
+  @ApiResponse({ status: 200, type: RoleResponseDto })
+  async update(@Param('id') id: string, @Body() dto: UpdateRoleDto): Promise<RoleResponseDto> {
     try {
       return await this.service.update(id, dto);
     } catch (error: unknown) {
@@ -65,7 +71,8 @@ export class RoleController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string) {
+  @ApiResponse({ status: 200, type: RoleResponseDto })
+  async remove(@Param('id') id: string): Promise<RoleResponseDto> {
     try {
       return await this.service.remove(id);
     } catch (error: unknown) {

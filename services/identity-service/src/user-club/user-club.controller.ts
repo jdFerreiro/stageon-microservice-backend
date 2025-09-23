@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/s
 import { UserClubService } from './user-club.service';
 import { CreateUserClubDto } from './dto/create-user-club.dto';
 import { RemoveUserClubDto } from './dto/remove-user-club.dto';
+import { UserClubResponseDto } from './dto/user-club-response.dto';
 
 @ApiTags('UserClub')
 @Controller('user-club')
@@ -12,8 +13,8 @@ export class UserClubController {
   @Post()
   @ApiOperation({ summary: 'Agregar usuario a club' })
   @ApiBody({ type: CreateUserClubDto })
-  @ApiResponse({ status: 201, description: 'Relación creada' })
-  async addUserToClub(@Body() dto: CreateUserClubDto) {
+  @ApiResponse({ status: 201, description: 'Relación creada', type: UserClubResponseDto })
+  async addUserToClub(@Body() dto: CreateUserClubDto): Promise<UserClubResponseDto> {
     return this.userClubService.addUserToClub(dto.userId, dto.clubId, dto.memberNumber);
   }
 
@@ -29,16 +30,16 @@ export class UserClubController {
   @Get('user/:userId')
   @ApiOperation({ summary: 'Obtener clubes de un usuario' })
   @ApiParam({ name: 'userId', type: String })
-  @ApiResponse({ status: 200, description: 'Lista de relaciones usuario-club' })
-  async getClubsForUser(@Param('userId') userId: string) {
+  @ApiResponse({ status: 200, description: 'Lista de relaciones usuario-club', type: [UserClubResponseDto] })
+  async getClubsForUser(@Param('userId') userId: string): Promise<UserClubResponseDto[]> {
     return this.userClubService.getClubsForUser(userId);
   }
 
   @Get('club/:clubId')
   @ApiOperation({ summary: 'Obtener usuarios de un club' })
   @ApiParam({ name: 'clubId', type: String })
-  @ApiResponse({ status: 200, description: 'Lista de relaciones usuario-club' })
-  async getUsersForClub(@Param('clubId') clubId: string) {
+  @ApiResponse({ status: 200, description: 'Lista de relaciones usuario-club', type: [UserClubResponseDto] })
+  async getUsersForClub(@Param('clubId') clubId: string): Promise<UserClubResponseDto[]> {
     return this.userClubService.getUsersForClub(clubId);
   }
 }

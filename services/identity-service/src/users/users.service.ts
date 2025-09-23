@@ -3,12 +3,62 @@ import { Inject, Injectable, NotFoundException, BadRequestException } from '@nes
 import { PinoLogger } from 'nestjs-pino';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user';
+import { Role } from '../entities/role';
+import { UserType } from '../entities/userType';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserResponseDto } from './dto/user-response.dto';
+import { RoleResponseDto } from '../roles/dto/role-response.dto';
+import { UserTypeResponseDto } from '../user-types/dto/user-type-response.dto';
+import { ClubResponseDto } from '../clubs/dto/club-response.dto';
 import bcrypt from 'bcrypt';
-import { Role } from '../entities/role';
-import { UserType } from '../entities/userType';
+
+// Helper to map User entity to UserResponseDto
+function toResponseDto(user: User): UserResponseDto {
+  const role: RoleResponseDto = user.role
+    ? {
+        id: user.role.id,
+        name: user.role.name,
+        isActive: user.role.isActive,
+      }
+    : { id: '', name: '', isActive: false };
+  const userType: UserTypeResponseDto = user.userType
+    ? {
+        id: user.userType.id,
+        name: user.userType.name,
+      }
+    : { id: '', name: '' };
+  const clubs: ClubResponseDto[] = user.userClubs && Array.isArray(user.userClubs)
+    ? user.userClubs
+        .map(uc =>
+          uc.club
+            ? {
+                id: uc.club.id,
+                name: uc.club.name,
+                description: uc.club.description,
+                address: uc.club.address,
+                phone: uc.club.phone,
+                logo: uc.club.logo,
+                email: uc.club.email,
+              } as ClubResponseDto
+            : undefined,
+        )
+        .filter((c): c is ClubResponseDto => !!c)
+    : [];
+  return {
+    id: user.id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    isActive: user.isActive,
+    passwordHash: user.passwordHash,
+    role,
+    userType,
+    clubs,
+
+  };
+}
 
 @Injectable()
 export class UsersService {
@@ -26,7 +76,7 @@ export class UsersService {
     this.logger.setContext(UsersService.name);
   }
 
-  async create(dto: CreateUserDto) {
+  async create(dto: CreateUserDto): Promise<UserResponseDto> {
     this.logger.info('Inicio método create');
     this.logger.debug({ dto }, 'Payload recibido en create');
     try {
@@ -56,57 +106,57 @@ export class UsersService {
       this.rabbitClient.emit('user.created', { id: savedUser.id, email: savedUser.email });
       this.logger.info('Usuario creado correctamente');
       this.logger.debug({ savedUser }, 'Detalle del usuario creado');
-      return savedUser;
+      return toResponseDto(savedUser);
     } catch (error: any) {
       this.logger.error({ error }, 'Error en create');
       throw error;
     }
   }
 
-  async findAll() {
+  async findAll(): Promise<UserResponseDto[]> {
     this.logger.info('Inicio método findAll');
     try {
-      const result = await this.userRepo.find({ relations: ['role', 'userType'] });
+      const result = await this.userRepo.find({ relations: ['role', 'userType', 'userClubs', 'userClubs.club'] });
       this.logger.info('Usuarios obtenidos correctamente');
       this.logger.debug({ result }, 'Detalle de usuarios obtenidos');
-      return result;
+      return result.map(user => toResponseDto(user));
     } catch (error: any) {
       this.logger.error({ error }, 'Error en findAll');
       throw error;
     }
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<UserResponseDto> {
     this.logger.info(`Inicio método findOne para id: ${id}`);
     try {
-      const user = await this.userRepo.findOne({ where: { id }, relations: ['role', 'userType'] });
+      const user = await this.userRepo.findOne({ where: { id }, relations: ['role', 'userType', 'userClubs', 'userClubs.club'] });
       if (!user) {
         this.logger.warn({ id }, 'Usuario no encontrado');
         throw new NotFoundException('Usuario no encontrado');
       }
       this.logger.info('Usuario obtenido correctamente');
       this.logger.debug({ user }, 'Detalle del usuario obtenido');
-      return user;
+      return toResponseDto(user);
     } catch (error: any) {
       this.logger.error({ error }, 'Error en findOne');
       throw error;
     }
   }
 
-  async findByEmailWithRole(email: string) {
+  async findByEmailWithRole(email: string): Promise<UserResponseDto | null> {
     this.logger.info(`Inicio método findByEmailWithRole para email: ${email}`);
     try {
-      const user = await this.userRepo.findOne({ where: { email }, relations: ['role', 'userType'] });
+      const user = await this.userRepo.findOne({ where: { email }, relations: ['role', 'userType', 'userClubs', 'userClubs.club'] });
       this.logger.info('Usuario obtenido por email correctamente');
       this.logger.debug({ user }, 'Detalle del usuario por email');
-      return user;
+      return user ? toResponseDto(user) : null;
     } catch (error: any) {
       this.logger.error({ error }, 'Error en findByEmailWithRole');
       throw error;
     }
   }
 
-  async update(id: string, dto: UpdateUserDto) {
+  async update(id: string, dto: UpdateUserDto): Promise<UserResponseDto> {
     this.logger.info(`Inicio método update para id: ${id}`);
     this.logger.debug({ dto }, 'Payload recibido en update');
     try {
@@ -138,14 +188,18 @@ export class UsersService {
     }
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<UserResponseDto> {
     this.logger.info(`Inicio método remove para id: ${id}`);
     try {
-      const user = await this.findOne(id);
-      const result = await this.userRepo.remove(user);
-      this.rabbitClient.emit('user.deleted', { id: user.id, email: user.email });
+      const userEntity = await this.userRepo.findOne({ where: { id }, relations: ['role', 'userType', 'userClubs', 'userClubs.club'] });
+      if (!userEntity) {
+        this.logger.warn({ id }, 'Usuario no encontrado');
+        throw new NotFoundException('Usuario no encontrado');
+      }
+      await this.userRepo.remove(userEntity);
+      this.rabbitClient.emit('user.deleted', { id: userEntity.id, email: userEntity.email });
       this.logger.info('Usuario eliminado correctamente');
-      return result;
+      return toResponseDto(userEntity);
     } catch (error: any) {
       this.logger.error({ error }, 'Error en remove');
       throw error;
@@ -153,7 +207,7 @@ export class UsersService {
   }
 
   // Opcional: asignar rol por nombre
-  async setRole(userId: string, roleName: string) {
+  async setRole(userId: string, roleName: string): Promise<UserResponseDto> {
     this.logger.info(`Inicio método setRole para userId: ${userId}, roleName: ${roleName}`);
     try {
       const user = await this.findOne(userId);
@@ -166,10 +220,11 @@ export class UsersService {
       const result = await this.userRepo.save(user);
       this.logger.info('Rol asignado correctamente');
       this.logger.debug({ result }, 'Detalle del usuario con nuevo rol');
-      return result;
+      return toResponseDto(result);
     } catch (error: any) {
       this.logger.error({ error }, 'Error en setRole');
       throw error;
     }
   }
 }
+// End of UsersService

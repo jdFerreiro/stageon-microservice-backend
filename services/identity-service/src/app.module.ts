@@ -15,6 +15,7 @@ import { RoleController } from './roles/roles.controller';
 import { ClubsModule } from './clubs/clubs.module';
 import { Club } from './entities/club';
 import { UserType } from './entities/userType';
+import { UserClub } from './entities/userClub';
 import { UserTypesModule } from './user-types/user-types.module';
 import { UserClubModule } from './user-club/user-club.module';
 
@@ -66,7 +67,7 @@ import { UserClubModule } from './user-club/user-club.module';
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
-  entities: [User, Role, Club, UserType],
+  entities: [User, Role, Club, UserType, UserClub],
         synchronize: true, // ⚠️ solo en dev
       }),
     }),
