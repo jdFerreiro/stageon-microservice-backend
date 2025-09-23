@@ -16,6 +16,7 @@ import { ClubsModule } from './clubs/clubs.module';
 import { Club } from './entities/club';
 import { UserType } from './entities/userType';
 import { UserTypesModule } from './user-types/user-types.module';
+import { UserClubModule } from './user-club/user-club.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { UserTypesModule } from './user-types/user-types.module';
   RolesModule,
   ClubsModule,
   UserTypesModule,
+  UserClubModule,
   ],
   controllers: [AuthController, UsersController, RoleController],
 })

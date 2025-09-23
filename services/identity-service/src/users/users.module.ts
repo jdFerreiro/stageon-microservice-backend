@@ -6,10 +6,11 @@ import { UsersController } from './users.controller';
 import { User } from '../entities/user';
 import { Role } from '../entities/role';
 import { JwtModule } from '@nestjs/jwt';
+import { UserType } from '../entities/userType';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role]),
+    TypeOrmModule.forFeature([User, Role, UserType]),
     JwtModule,
     ClientsModule.register([
       {

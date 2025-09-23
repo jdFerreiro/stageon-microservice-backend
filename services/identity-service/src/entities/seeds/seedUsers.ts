@@ -3,6 +3,7 @@ import { User } from '../user';
 import { UserType } from '../userType';
 import { Role } from '../role';
 import { Club } from '../club';
+import { UserClub } from '../userClub';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
@@ -15,7 +16,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASS || '',
   database: process.env.DB_NAME || 'stageon',
-  entities: [User, UserType, Role, Club],
+  entities: [User, UserType, Role, Club, UserClub],
   synchronize: false,
 });
 
@@ -56,12 +57,12 @@ async function seedUsers() {
     if (!user) {
       user = userRepo.create(dummyUser);
       await userRepo.save(user);
-      // Relacionar usuario con el club en la tabla intermedia manualmente
+      // Relacionar usuario con el club en la tabla intermedia manualmente (nuevo esquema)
       await AppDataSource.query(
-        `INSERT IGNORE INTO users_clubs_clubs (usersId, clubsId) VALUES (?, ?);`,
-        [user.id, clubHermandad.id]
+        `INSERT IGNORE INTO users_clubs_clubs (id, userId, clubId, memberNumber) VALUES (UUID(), ?, ?, ?);`,
+        [user.id, clubHermandad.id, `00245900`]
       );
-      console.log(`Usuario dummy creado para rol: ${role.name} y relacionado con el club.`);
+      console.log(`Usuario dummy creado para rol: ${role.name} y relacionado con el club (nuevo esquema).`);
     } else {
       let updated = false;
       if (!user.role || user.role.id !== role.id) {
@@ -72,15 +73,15 @@ async function seedUsers() {
         user.userType = userTypeSocio;
         updated = true;
       }
-      // Relacionar usuario con el club si no existe en la tabla intermedia
+      // Relacionar usuario con el club si no existe en la tabla intermedia (nuevo esquema)
       const [rel] = await AppDataSource.query(
-        `SELECT * FROM users_clubs_clubs WHERE usersId = ? AND clubsId = ?`,
+        `SELECT * FROM users_clubs_clubs WHERE userId = ? AND clubId = ?`,
         [user.id, clubHermandad.id]
       );
       if (!rel) {
         await AppDataSource.query(
-          `INSERT INTO users_clubs_clubs (usersId, clubsId) VALUES (?, ?);`,
-          [user.id, clubHermandad.id]
+          `INSERT INTO users_clubs_clubs (id, userId, clubId, memberNumber) VALUES (UUID(), ?, ?, ?);`,
+          [user.id, clubHermandad.id, `SOCIO-${role.name.toUpperCase()}`]
         );
         updated = true;
       }

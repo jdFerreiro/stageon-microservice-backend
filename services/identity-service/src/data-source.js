@@ -3,8 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppDataSource = void 0;
 require("dotenv/config");
 var typeorm_1 = require("typeorm");
-var user_1 = require("./src/entities/user");
-var role_1 = require("./src/entities/role");
+var user_1 = require("./entities/user");
+var role_1 = require("./entities/role");
 exports.AppDataSource = new typeorm_1.DataSource({
     type: 'mysql',
     host: process.env.DB_HOST || 'localhost',

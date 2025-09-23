@@ -5,12 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
-  ManyToMany,
-  JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Role } from './role';
 import { UserType } from './userType';
 import { Club } from './club';
+
+import { UserClub } from './userClub';
 
 @Entity('users')
 export class User {
@@ -48,19 +49,8 @@ export class User {
   userType: UserType;
 
   /**
-   * Relación muchos a muchos con clubes
+   * Relación con UserClub para clubes y número de socio
    */
-  @ManyToMany(() => Club, club => club.users)
-  @JoinTable({
-    name: 'users_clubs_clubs',
-    joinColumn: {
-      name: 'usersId',
-      referencedColumnName: 'id',
-    },
-    inverseJoinColumn: {
-      name: 'clubsId',
-      referencedColumnName: 'id',
-    },
-  })
-  clubs: Club[];
+  @OneToMany(() => UserClub, userClub => userClub.user)
+  userClubs: UserClub[];
 }

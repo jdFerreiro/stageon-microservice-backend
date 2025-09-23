@@ -1,5 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { User } from './user';
+
+import { UserClub } from './userClub';
 
 @Entity('clubs')
 export class Club {
@@ -24,6 +26,6 @@ export class Club {
   @Column({ nullable: true })
   email: string;
 
-  @ManyToMany(() => User, user => user.clubs)
-  users: User[];
+  @OneToMany(() => UserClub, userClub => userClub.club)
+  userClubs: UserClub[];
 }

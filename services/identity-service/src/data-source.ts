@@ -1,9 +1,10 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
-import { User } from './src/entities/user';
-import { UserType } from './src/entities/userType';
-import { Role } from './src/entities/role';
-import { Club } from './src/entities/club';
+import { User } from './entities/user';
+import { UserType } from './entities/userType';
+import { Role } from './entities/role';
+import { Club } from './entities/club';
+import { UserClub } from './entities/userClub';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -16,7 +17,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'stageon',
   entities: isProd
     ? ['dist/src/entities/*.js']
-    : [User, UserType, Role, Club],
+    : [User, UserType, Role, Club, UserClub],
   migrations: isProd
     ? ['dist/migrations/*.js']
     : ['src/migrations/*.ts'],
