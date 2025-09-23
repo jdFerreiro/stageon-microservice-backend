@@ -12,6 +12,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { RolesModule } from './roles/roles.module';
 import { UsersController } from './users/users.controller';
 import { RoleController } from './roles/roles.controller';
+import { ClubsModule } from './clubs/clubs.module';
+import { Club } from './entities/club';
+import { UserType } from './entities/userType';
+import { UserTypesModule } from './user-types/user-types.module';
 
 @Module({
   imports: [
@@ -61,13 +65,15 @@ import { RoleController } from './roles/roles.controller';
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
-        entities: [User, Role],
+  entities: [User, Role, Club, UserType],
         synchronize: true, // ⚠️ solo en dev
       }),
     }),
-    UsersModule,
-    AuthModule,
-    RolesModule,
+  UsersModule,
+  AuthModule,
+  RolesModule,
+  ClubsModule,
+  UserTypesModule,
   ],
   controllers: [AuthController, UsersController, RoleController],
 })

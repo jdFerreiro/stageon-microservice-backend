@@ -5,8 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Role } from './role';
+import { UserType } from './userType';
+import { Club } from './club';
 
 @Entity('users')
 export class User {
@@ -38,9 +42,25 @@ export class User {
   role: Role;
 
   /**
-   * Indica si el usuario es socio o externo.
-   * Valores posibles: 'socio' | 'externo'
+   * Relación con el tipo de usuario (socio o externo)
    */
-  @Column({ type: 'enum', enum: ['socio', 'externo'], default: 'socio' })
-  userType: 'socio' | 'externo';
+  @ManyToOne(() => UserType, userType => userType.users, { eager: true })
+  userType: UserType;
+
+  /**
+   * Relación muchos a muchos con clubes
+   */
+  @ManyToMany(() => Club, club => club.users)
+  @JoinTable({
+    name: 'users_clubs_clubs',
+    joinColumn: {
+      name: 'usersId',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'clubsId',
+      referencedColumnName: 'id',
+    },
+  })
+  clubs: Club[];
 }

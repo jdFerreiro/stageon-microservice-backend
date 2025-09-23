@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import { Role } from '../role';
 import { User } from '../user';
+import { UserType } from '../userType';
+import { Club } from '../club';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -12,7 +14,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASS || '',
   database: process.env.DB_NAME || 'stageon',
-  entities: [Role, User],
+  entities: [User, UserType, Role, Club],
   synchronize: false,
 });
 

@@ -1,6 +1,8 @@
 import { DataSource } from 'typeorm';
 import { User } from '../user';
+import { UserType } from '../userType';
 import { Role } from '../role';
+import { Club } from '../club';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
@@ -13,7 +15,7 @@ const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASS || '',
   database: process.env.DB_NAME || 'stageon',
-  entities: [User, Role],
+  entities: [User, UserType, Role, Club],
   synchronize: false,
 });
 
@@ -21,6 +23,19 @@ async function seedUsers() {
   await AppDataSource.initialize();
   const userRepo = AppDataSource.getRepository(User);
   const roleRepo = AppDataSource.getRepository(Role);
+  const userTypeRepo = AppDataSource.getRepository(UserType);
+  const clubRepo = AppDataSource.getRepository(Club);
+
+  // Buscar el userType 'socio' y el club 'Hermandad Gallega de Venezuela'
+  const userTypeSocio = await userTypeRepo.findOne({ where: { name: 'socio' } });
+  const clubHermandad = await clubRepo.findOne({ where: { name: 'Hermandad Gallega de Venezuela' } });
+  if (!userTypeSocio) {
+    throw new Error("No se encontró el UserType 'socio'");
+  }
+  if (!clubHermandad) {
+    throw new Error("No se encontró el Club 'Hermandad Gallega de Venezuela'");
+  }
+
   const roles = await roleRepo.find();
 
   for (const role of roles) {
@@ -32,20 +47,46 @@ async function seedUsers() {
       passwordHash,
       isActive: true,
       role: role,
+      userType: userTypeSocio,
     };
     let user = await userRepo.findOne({
       where: { email: dummyUser.email },
-      relations: ['role'],
+      relations: ['role', 'userType'],
     });
     if (!user) {
       user = userRepo.create(dummyUser);
       await userRepo.save(user);
-      console.log(`Usuario dummy creado para rol: ${role.name}`);
+      // Relacionar usuario con el club en la tabla intermedia manualmente
+      await AppDataSource.query(
+        `INSERT IGNORE INTO users_clubs_clubs (usersId, clubsId) VALUES (?, ?);`,
+        [user.id, clubHermandad.id]
+      );
+      console.log(`Usuario dummy creado para rol: ${role.name} y relacionado con el club.`);
     } else {
+      let updated = false;
       if (!user.role || user.role.id !== role.id) {
         user.role = role;
+        updated = true;
+      }
+      if (!user.userType || user.userType.id !== userTypeSocio.id) {
+        user.userType = userTypeSocio;
+        updated = true;
+      }
+      // Relacionar usuario con el club si no existe en la tabla intermedia
+      const [rel] = await AppDataSource.query(
+        `SELECT * FROM users_clubs_clubs WHERE usersId = ? AND clubsId = ?`,
+        [user.id, clubHermandad.id]
+      );
+      if (!rel) {
+        await AppDataSource.query(
+          `INSERT INTO users_clubs_clubs (usersId, clubsId) VALUES (?, ?);`,
+          [user.id, clubHermandad.id]
+        );
+        updated = true;
+      }
+      if (updated) {
         await userRepo.save(user);
-        console.log(`Rol ${role.name} asignado/actualizado a usuario dummy existente.`);
+        console.log(`Usuario dummy actualizado para rol: ${role.name} y relación club actualizada.`);
       } else {
         console.log(`Usuario dummy ya existe y tiene el rol: ${role.name}`);
       }

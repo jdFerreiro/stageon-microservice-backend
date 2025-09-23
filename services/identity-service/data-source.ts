@@ -1,5 +1,11 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
+import { User } from './src/entities/user';
+import { UserType } from './src/entities/userType';
+import { Role } from './src/entities/role';
+import { Club } from './src/entities/club';
+
+const isProd = process.env.NODE_ENV === 'production';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -8,7 +14,11 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASS || '',
   database: process.env.DB_NAME || 'stageon',
-  entities: ['dist/entities/*.js'],
-  migrations: ['dist/migrations/*.js'],
-  synchronize: false,
+  entities: isProd
+    ? ['dist/src/entities/*.js']
+    : [User, UserType, Role, Club],
+  migrations: isProd
+    ? ['dist/migrations/*.js']
+    : ['src/migrations/*.ts'],
+  synchronize: true, // <--- ACTIVADO para crear tabla intermedia automáticamente
 });
