@@ -13,4 +13,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @IsOptional()
   @IsUUID('4', { message: 'El roleId debe ser un UUID válido' })
   roleId?: string;
+
+  @ApiProperty({ required: false, description: 'ID del tipo de usuario asociado' })
+  @IsOptional()
+  @IsUUID('4', { message: 'El userTypeId debe ser un UUID válido' })
+  userTypeId?: string;
 }

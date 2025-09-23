@@ -29,4 +29,8 @@ export class CreateUserDto {
   @ApiProperty({ required: true, description: 'ID del rol asociado al usuario' })
   @IsUUID('4', { message: 'El roleId debe ser un UUID válido' })
   roleId: string;
+
+  @ApiProperty({ required: true, description: 'ID del tipo de usuario asociado' })
+  @IsUUID('4', { message: 'El userTypeId debe ser un UUID válido' })
+  userTypeId: string;
 }
