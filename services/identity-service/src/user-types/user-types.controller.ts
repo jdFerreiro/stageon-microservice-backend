@@ -1,4 +1,6 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards } from '@nestjs/common';
+import { CreateUserTypeDto } from './dto/create-user-type.dto';
+import { UpdateUserTypeDto } from './dto/update-user-type.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { UserTypesService } from './user-types.service';
@@ -13,7 +15,7 @@ export class UserTypesController {
   @Post()
   @ApiOperation({ summary: 'Crear user type' })
   @ApiResponse({ status: 201, description: 'User type creado.' })
-  create(@Body() data: any) {
+  create(@Body() data: CreateUserTypeDto) {
     return this.userTypesService.create(data);
   }
 
@@ -37,7 +39,7 @@ export class UserTypesController {
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar user type' })
   @ApiResponse({ status: 200, description: 'User type actualizado.' })
-  update(@Param('id') id: string, @Body() data: any) {
+  update(@Param('id') id: string, @Body() data: UpdateUserTypeDto) {
     return this.userTypesService.update(id, data);
   }
 

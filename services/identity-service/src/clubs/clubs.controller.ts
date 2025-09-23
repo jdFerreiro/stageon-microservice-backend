@@ -1,4 +1,6 @@
 import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards } from '@nestjs/common';
+import { CreateClubDto } from './dto/create-club.dto';
+import { UpdateClubDto } from './dto/update-club.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ClubsService } from './clubs.service';
@@ -13,7 +15,7 @@ export class ClubsController {
   @Post()
   @ApiOperation({ summary: 'Crear club' })
   @ApiResponse({ status: 201, description: 'Club creado.' })
-  create(@Body() data: any) {
+  create(@Body() data: CreateClubDto) {
     return this.clubsService.create(data);
   }
 
@@ -37,7 +39,7 @@ export class ClubsController {
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar club' })
   @ApiResponse({ status: 200, description: 'Club actualizado.' })
-  update(@Param('id') id: string, @Body() data: any) {
+  update(@Param('id') id: string, @Body() data: UpdateClubDto) {
     return this.clubsService.update(id, data);
   }
 

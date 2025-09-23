@@ -2,6 +2,8 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Club } from '../entities/club';
+import { CreateClubDto } from './dto/create-club.dto';
+import { UpdateClubDto } from './dto/update-club.dto';
 
 @Injectable()
 export class ClubsService {
@@ -10,11 +12,11 @@ export class ClubsService {
     private readonly clubRepo: Repository<Club>,
   ) {}
 
-  async create(data: Partial<Club>) {
+  async create(data: CreateClubDto) {
     const exists = await this.clubRepo.findOne({ where: { name: data.name } });
     if (exists) throw new BadRequestException('El club ya existe');
-    const club = this.clubRepo.create(data);
-    return this.clubRepo.save(club);
+  const club = this.clubRepo.create(data);
+  return this.clubRepo.save(club);
   }
 
   async findAll() {
@@ -27,7 +29,7 @@ export class ClubsService {
     return club;
   }
 
-  async update(id: string, data: Partial<Club>) {
+  async update(id: string, data: UpdateClubDto) {
     const club = await this.findOne(id);
     Object.assign(club, data);
     return this.clubRepo.save(club);
