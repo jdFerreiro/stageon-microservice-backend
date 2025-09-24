@@ -67,7 +67,7 @@ import { UserClubModule } from './user-club/user-club.module';
         username: config.get('DB_USER'),
         password: config.get('DB_PASS'),
         database: config.get('DB_NAME'),
-  entities: [User, Role, Club, UserType, UserClub],
+        entities: [User, Role, Club, UserType, UserClub],
         synchronize: true, // ⚠️ solo en dev
       }),
     }),
