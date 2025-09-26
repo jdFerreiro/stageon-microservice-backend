@@ -14,11 +14,17 @@ export class UserTypesService {
   ) {}
 
   async create(data: CreateUserTypeDto): Promise<UserTypeResponseDto> {
-    console.log(data);
-    const exists = await this.userTypeRepo.findOne({ where: { name: data.name } });
-    console.log(exists);
+    if (!data.name || typeof data.name !== 'string') {
+      throw new BadRequestException('El nombre es obligatorio y debe ser un string');
+    }
+    // Comparación insensible a mayúsculas/minúsculas y espacios
+    const normalizedName = data.name.trim().toLowerCase();
+    const exists = await this.userTypeRepo
+      .createQueryBuilder('userType')
+      .where('LOWER(TRIM(userType.name)) = :normalizedName', { normalizedName })
+      .getOne();
     if (exists) throw new BadRequestException('El tipo de usuario ya existe');
-  const userType = this.userTypeRepo.create(data);
+    const userType = this.userTypeRepo.create({ ...data, name: data.name.trim() });
     const saved = await this.userTypeRepo.save(userType);
     return this.toResponseDto(saved);
   }

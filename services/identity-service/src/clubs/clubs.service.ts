@@ -14,11 +14,24 @@ export class ClubsService {
   ) {}
 
   async create(data: CreateClubDto): Promise<ClubResponseDto> {
-    const exists = await this.clubRepo.findOne({ where: { name: data.name } });
-    if (exists) throw new BadRequestException('El club ya existe');
-    const club = this.clubRepo.create(data);
-    const saved = await this.clubRepo.save(club);
-    return this.toResponseDto(saved);
+    // Comparación insensible a mayúsculas/minúsculas y espacios    
+      try {
+        if (!data.name || typeof data.name !== 'string' || !data.name.trim()) {
+          throw new BadRequestException('El nombre del club es obligatorio');
+        }
+        const normalizedName = data.name.trim().toLowerCase();
+        const exists = await this.clubRepo
+          .createQueryBuilder('club')
+          .where('LOWER(TRIM(club.name)) = LOWER(TRIM(:name))', { name: data.name })
+          .getOne();
+        if (exists) throw new BadRequestException('El club ya existe');
+        const club = this.clubRepo.create(data);
+        const saved = await this.clubRepo.save(club);
+        return this.toResponseDto(saved);
+      } catch (error) {
+        console.error('Error en ClubsService.create:', error);
+        throw error;
+      }
   }
 
   async findAll(): Promise<ClubResponseDto[]> {

@@ -17,6 +17,7 @@ export class ClubsController {
   @ApiOperation({ summary: 'Crear club' })
   @ApiResponse({ status: 201, type: ClubResponseDto })
   create(@Body() data: CreateClubDto): Promise<ClubResponseDto> {
+    console.log('Creating club with data:', data);
     return this.clubsService.create(data);
   }
 

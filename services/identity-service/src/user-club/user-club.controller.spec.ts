@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserClubController } from './user-club.controller';
 import { UserClubService } from './user-club.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 const mockUserClubService = {
   addUserToClub: jest.fn((userId, clubId, memberNumber) => ({ id: 1, userId, clubId, memberNumber })),
@@ -18,7 +19,10 @@ describe('UserClubController', () => {
       providers: [
         { provide: UserClubService, useValue: mockUserClubService },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<UserClubController>(UserClubController);
   });

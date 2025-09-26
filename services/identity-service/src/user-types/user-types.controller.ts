@@ -8,6 +8,7 @@ import { UserTypeResponseDto } from './dto/user-type-response.dto';
 
 @ApiTags('user-types')
 @ApiBearerAuth('jwt')
+@UseGuards(JwtAuthGuard)
 @Controller('user-types')
 export class UserTypesController {
   constructor(private readonly userTypesService: UserTypesService) {}
@@ -17,6 +18,7 @@ export class UserTypesController {
   @ApiOperation({ summary: 'Crear user type' })
   @ApiResponse({ status: 201, type: UserTypeResponseDto })
   create(@Body() data: CreateUserTypeDto): Promise<UserTypeResponseDto> {
+    console.log(data);
     return this.userTypesService.create(data);
   }
 

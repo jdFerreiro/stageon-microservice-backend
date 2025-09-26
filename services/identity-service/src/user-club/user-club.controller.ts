@@ -1,11 +1,14 @@
-import { Controller, Post, Delete, Param, Body, Get } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
+import { Controller, Post, Delete, Param, Body, Get, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserClubService } from './user-club.service';
 import { CreateUserClubDto } from './dto/create-user-club.dto';
 import { RemoveUserClubDto } from './dto/remove-user-club.dto';
 import { UserClubResponseDto } from './dto/user-club-response.dto';
 
-@ApiTags('UserClub')
+@ApiTags('user-club')
+@ApiBearerAuth('jwt')
+@UseGuards(JwtAuthGuard)
 @Controller('user-club')
 export class UserClubController {
   constructor(private readonly userClubService: UserClubService) {}
