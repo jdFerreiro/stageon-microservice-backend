@@ -7,12 +7,15 @@ import { User } from './entities/user';
 import { Role } from './entities/role';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { AuthController } from './auth/auth.controller';
 import { JwtModule } from '@nestjs/jwt';
 import { RolesModule } from './roles/roles.module';
+import { ClubsModule } from './clubs/clubs.module';
+import { AuthController } from './auth/auth.controller';
 import { UsersController } from './users/users.controller';
 import { RoleController } from './roles/roles.controller';
-import { ClubsModule } from './clubs/clubs.module';
+import { ClubsController } from './clubs/clubs.controller';
+import { UserTypesController } from './user-types/user-types.controller';
+import { UserClubController } from './user-club/user-club.controller';  
 import { Club } from './entities/club';
 import { UserType } from './entities/userType';
 import { UserClub } from './entities/userClub';
@@ -78,6 +81,6 @@ import { UserClubModule } from './user-club/user-club.module';
   UserTypesModule,
   UserClubModule,
   ],
-  controllers: [AuthController, UsersController, RoleController],
+  controllers: [AuthController, UsersController, RoleController, ClubsController, UserTypesController, UserClubController],
 })
 export class AppModule {}
