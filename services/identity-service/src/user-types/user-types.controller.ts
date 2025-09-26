@@ -18,7 +18,6 @@ export class UserTypesController {
   @ApiOperation({ summary: 'Crear user type' })
   @ApiResponse({ status: 201, type: UserTypeResponseDto })
   create(@Body() data: CreateUserTypeDto): Promise<UserTypeResponseDto> {
-    console.log(data);
     return this.userTypesService.create(data);
   }
 

@@ -10,6 +10,6 @@ export class UserClubResponseDto {
   @ApiProperty({ description: 'ID del club', format: 'uuid' })
   clubId: string;
 
-  @ApiProperty({ description: 'Número de socio', required: false })
-  memberNumber?: string;
+  @ApiProperty({ description: 'Número de socio', required: false, nullable: true })
+  memberNumber: string | null;
 }

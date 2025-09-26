@@ -15,5 +15,5 @@ export class UserClub {
   club: Club;
 
   @Column({ type: 'varchar', length: 50, nullable: true })
-  memberNumber: string;
+  memberNumber: string | null;
 }

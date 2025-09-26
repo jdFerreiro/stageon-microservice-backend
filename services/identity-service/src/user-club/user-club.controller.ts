@@ -1,14 +1,16 @@
-import { Controller, Post, Delete, Param, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Delete, Param, Body, Get, Patch, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserClubService } from './user-club.service';
 import { CreateUserClubDto } from './dto/create-user-club.dto';
 import { RemoveUserClubDto } from './dto/remove-user-club.dto';
 import { UserClubResponseDto } from './dto/user-club-response.dto';
+import { UpdateUserClubDto } from './dto/update-user-club.dto';
 
 @ApiTags('user-club')
 @ApiBearerAuth('jwt')
 @UseGuards(JwtAuthGuard)
+
 @Controller('user-club')
 export class UserClubController {
   constructor(private readonly userClubService: UserClubService) {}
@@ -44,5 +46,17 @@ export class UserClubController {
   @ApiResponse({ status: 200, description: 'Lista de relaciones usuario-club', type: [UserClubResponseDto] })
   async getUsersForClub(@Param('clubId') clubId: string): Promise<UserClubResponseDto[]> {
     return this.userClubService.getUsersForClub(clubId);
+  }
+
+  @Patch(':id')
+  @ApiOperation({ summary: 'Editar número de miembro de la relación usuario-club' })
+  @ApiParam({ name: 'id', type: String })
+  @ApiBody({ type: UpdateUserClubDto })
+  @ApiResponse({ status: 200, description: 'Relación actualizada', type: UserClubResponseDto })
+  async updateMemberNumber(
+    @Param('id') id: string,
+    @Body() dto: UpdateUserClubDto,
+  ): Promise<UserClubResponseDto> {
+    return this.userClubService.updateMemberNumber(id, dto.memberNumber);
   }
 }

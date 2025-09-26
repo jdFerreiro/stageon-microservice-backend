@@ -25,6 +25,16 @@ export class UserClubService {
     return this.toResponseDto(saved);
   }
 
+  async updateMemberNumber(id: string, memberNumber?: string): Promise<UserClubResponseDto> {
+    const userClub = await this.userClubRepository.findOne({ where: { id }, relations: ['user', 'club'] });
+    if (!userClub) {
+      throw new Error('Relación usuario-club no encontrada');
+    }
+  userClub.memberNumber = typeof memberNumber === 'string' ? memberNumber : null;
+    const saved = await this.userClubRepository.save(userClub);
+    return this.toResponseDto(saved);
+  }
+
   async removeUserFromClub(userId: string, clubId: string): Promise<void> {
     await this.userClubRepository.delete({ user: { id: userId }, club: { id: clubId } });
   }
@@ -44,7 +54,7 @@ export class UserClubService {
       id: entity.id,
       userId: entity.user?.id,
       clubId: entity.club?.id,
-      memberNumber: entity.memberNumber,
+      memberNumber: entity.memberNumber ?? null,
     };
   }
 }
