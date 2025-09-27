@@ -40,7 +40,6 @@ export class JwtAuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
       request.user = payload;
-      console.info(`[JwtAuthGuard] Token válido para usuario: ${payload.email || payload.sub}`);
       return true;
     } catch (error) {
       console.error('[JwtAuthGuard] Error al verificar el token JWT:', error);

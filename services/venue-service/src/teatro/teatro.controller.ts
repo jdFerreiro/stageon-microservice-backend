@@ -25,7 +25,7 @@ export class TeatroController {
   @ApiBody({ type: CreateTeatroDto })
   @ApiResponse({ status: 201, description: 'Teatro creado correctamente.' })
   @ApiResponse({ status: 400, description: 'Datos inválidos.' })
-  create(@Body() createTeatroDto: CreateTeatroDto) {
+  async create(@Body() createTeatroDto: CreateTeatroDto) {
     return this.teatroService.create(createTeatroDto);
   }
 
