@@ -16,6 +16,12 @@ async function bootstrap() {
     passphrase: process.env.PFX_PASSPHRASE || '',
   };
   const app = await NestFactory.create(AppModule, { httpsOptions });
+  // Habilitar CORS
+  app.enableCors({
+    origin: '*', // Cambia esto por el dominio que desees permitir en producción
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Venue Service API')
