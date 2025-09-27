@@ -1,74 +1,45 @@
-
-import { IsString, IsOptional, IsBoolean, IsArray, MaxLength, MinLength, IsEmail } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
+import { MaxLength, IsOptional, IsUUID, IsBoolean } from 'class-validator';
 
 export class CreateTeatroDto {
-
-  @ApiProperty({ description: 'Nombre del teatro', minLength: 3, maxLength: 500 })
-  @IsString()
-  @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres' })
-  @MaxLength(500, { message: 'El nombre no puede exceder los 500 caracteres' })
+  @ApiProperty({ description: 'Nombre del teatro', maxLength: 500 })
+  @MaxLength(500)
   name: string;
 
-  @ApiPropertyOptional({ description: 'Descripción del teatro' })
-  @IsString()
+  @ApiProperty({ description: 'Descripción del teatro', required: false })
   @IsOptional()
   description?: string;
 
-  @ApiProperty({ description: 'Dirección del teatro', minLength: 3 })
-  @IsString()
-  @MinLength(3, { message: 'La dirección debe tener al menos 3 caracteres' })
+  @ApiProperty({ description: 'Dirección del teatro' })
   address: string;
 
-  @ApiProperty({ description: 'Ciudad del teatro', minLength: 3, maxLength: 500 })
-  @IsString()
-  @MinLength(3, { message: 'La ciudad debe tener al menos 3 caracteres' })
-  @MaxLength(500, {
-    message: 'La ciudad no puede exceder los 500 caracteres',
-  })
+  @ApiProperty({ description: 'Ciudad del teatro', maxLength: 500 })
+  @MaxLength(500)
   city: string;
 
-  @ApiProperty({ description: 'País del teatro', minLength: 3, maxLength: 250 })
-  @IsString()
-  @MinLength(3, { message: 'El país debe tener al menos 3 caracteres' })
-  @MaxLength(250, {
-    message: 'El país no puede exceder los 250 caracteres',
-  })
+  @ApiProperty({ description: 'País del teatro', maxLength: 250 })
+  @MaxLength(250)
   country: string;
 
-  @ApiProperty({ description: 'Nombre de contacto', minLength: 3, maxLength: 450 })
-  @IsString()
-  @MinLength(3, {
-    message: 'El nombre de contacto debe tener al menos 3 caracteres',
-  })
-  @MaxLength(450, {
-    message: 'El nombre de contacto no puede exceder los 450 caracteres',
-  })
+  @ApiProperty({ description: 'Nombre del contacto', maxLength: 450 })
+  @MaxLength(450)
   contactName: string;
 
-  @ApiPropertyOptional({ description: 'Correo electrónico de contacto', maxLength: 500 })
-  @IsString()
-  @IsEmail({}, { message: 'El correo electrónico del contacto no es válido' })
-  @MaxLength(500, {
-    message:
-      'El correo electrónico del contacto no puede exceder los 500 caracteres',
-  })
+  @ApiProperty({ description: 'Email del contacto', required: false, maxLength: 500 })
   @IsOptional()
+  @MaxLength(500)
   contactEmail?: string;
 
-  @ApiProperty({ description: 'Teléfono de contacto', minLength: 7, maxLength: 50 })
-  @IsString()
-  @MinLength(7, { message: 'El teléfono debe tener al menos 7 caracteres' })
-  @MaxLength(50, { message: 'El teléfono no puede exceder los 50 caracteres' })
+  @ApiProperty({ description: 'Teléfono del contacto', maxLength: 50 })
+  @MaxLength(50)
   contactPhone: string;
 
-  @ApiPropertyOptional({ description: 'Indica si el teatro está activo', default: true })
+  @ApiProperty({ description: 'Indica si el teatro está activo', default: true, required: false })
+  @IsOptional()
   @IsBoolean()
-  @IsOptional()
-  active: boolean = true;
+  isactive?: boolean;
 
-  @ApiPropertyOptional({ description: 'Salas asociadas al teatro', type: [Object] })
-  @IsArray()
-  @IsOptional()
-  salas?: any[];
+  @ApiProperty({ description: 'ID del club asociado', type: 'string', format: 'uuid' })
+  @IsUUID()
+  clubId: string;
 }

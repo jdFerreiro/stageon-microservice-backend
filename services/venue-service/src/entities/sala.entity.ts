@@ -7,26 +7,30 @@ import {
 } from 'typeorm';
 import { Teatro } from './teatro.entity';
 import { Sector } from './sector.entity';
-import { MaxLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Sala {
+  @ApiProperty({
+    description: 'ID único de la sala',
+    type: 'string',
+    format: 'uuid',
+  })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ description: 'Nombre de la sala' })
+  @Column()
+  name: string;
+
+  @ApiProperty({
+    description: 'ID del teatro al que pertenece',
+    type: 'string',
+    format: 'uuid',
+  })
   @ManyToOne(() => Teatro, (teatro) => teatro.salas)
   teatro: Teatro;
 
-  @Column()
-  @MaxLength(250)
-  name: string;
-
-  @Column({ nullable: true })
-  description: string;
-
-  @Column({ default: true })
-  isactive: boolean;
-
-  @OneToMany(() => Sector, (sector) => sector.sala, { cascade: true })
+  @OneToMany(() => Sector, (sector) => sector.sala)
   sectores: Sector[];
 }
