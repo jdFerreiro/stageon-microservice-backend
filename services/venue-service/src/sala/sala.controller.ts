@@ -23,7 +23,6 @@ export class SalaController {
 
   @Post()
   create(@Body() createSalaDto: CreateSalaDto) {
-    console.log('data received', createSalaDto);
     return this.salaService.create(createSalaDto);
   }
 
