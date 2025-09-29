@@ -43,6 +43,6 @@ async function bootstrap() {
   SwaggerModule.setup('/api', app, document);
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   await app.listen(process.env.PORT || 7020);
-  console.log(`Identity Service running on port ${process.env.PORT || 7020}`);
+  console.log(`Venue Service running on port ${process.env.PORT || 7020}`);
 }
 void bootstrap();
