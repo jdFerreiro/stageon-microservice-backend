@@ -22,12 +22,12 @@ export class CreateSectorDto {
   @IsNotEmpty({ message: 'La capacidad no puede estar vacía' })
   capacity: number;
 
-  @ApiProperty({ description: 'Precio del sector', type: 'number', minimum: 0.01 })
+  @ApiProperty({ description: 'Precio del sector', type: 'number', minimum: 0 })
   @IsNumber(
     { maxDecimalPlaces: 2 },
     { message: 'El precio debe ser un número válido' },
   )
-  @Min(0.01, { message: 'El precio debe ser al menos 0.01' })
+  @Min(0, { message: 'El precio debe ser al menos 0' })
   price: number;
 
   @ApiPropertyOptional({ description: 'Descuento del sector', minimum: 0 })

@@ -20,8 +20,12 @@ export class ButacaService {
     if (butacaExists.length) {
       throw new Error('Butaca already exists');
     }
-    const butaca = this.repo.create(createButacaDto);
-    return await this.repo.save(butaca);
+    const butaca = this.repo.create({
+      ...createButacaDto,
+      sector: createButacaDto.sectorId ? { id: createButacaDto.sectorId } : undefined,
+      status: createButacaDto.statusId ? { id: createButacaDto.statusId } : undefined,
+    });
+    return this.repo.save(butaca);
   }
 
   async findAll() {
@@ -50,5 +54,12 @@ export class ButacaService {
       throw new NotFoundException(`Butaca with id ${id} not found`);
     }
     return this.repo.delete(id);
+  }
+
+  async findBySector(sectorId: string) {
+    return this.repo.find({
+      where: { sector: { id: sectorId } },
+      relations: ['sector'],
+    });
   }
 }

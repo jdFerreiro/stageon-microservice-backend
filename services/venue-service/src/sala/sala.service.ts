@@ -83,4 +83,11 @@ export class SalaService {
     }
     return await this.salaRepo.remove(sala);
   }
+
+  async findByTeatro(teatroId: string) {
+    return this.salaRepo.find({
+      where: { teatro: { id: teatroId } },
+      relations: ['teatro'],
+    });
+  }
 }

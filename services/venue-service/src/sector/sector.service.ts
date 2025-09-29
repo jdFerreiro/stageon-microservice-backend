@@ -13,15 +13,11 @@ export class SectorService {
   ) {}
 
   async create(createSectorDto: CreateSectorDto) {
-    const existingSector = await this.sectorRepo.findOneBy({
-      name: createSectorDto.name,
+    const sector = this.sectorRepo.create({
+      ...createSectorDto,
+      sala: { id: createSectorDto.salaId },
+      status: { id: createSectorDto.statusId },
     });
-    if (existingSector) {
-      throw new NotFoundException(
-        `Sector con nombre ${createSectorDto.name} ya existe`,
-      );
-    }
-    const sector = this.sectorRepo.create(createSectorDto);
     return this.sectorRepo.save(sector);
   }
 
@@ -52,5 +48,12 @@ export class SectorService {
       throw new NotFoundException(`Sector con id ${id} no encontrado`);
     }
     return await this.sectorRepo.remove(sector);
+  }
+
+  async findBySala(salaId: string) {
+    return this.sectorRepo.find({
+      where: { sala: { id: salaId } },
+      relations: ['sala'],
+    });
   }
 }

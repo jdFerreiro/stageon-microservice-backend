@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Sala } from './sala.entity';
 import { Butaca } from './butaca.entity';
@@ -17,8 +18,13 @@ export class Sector {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ description: 'ID de la sala', type: 'string', format: 'uuid' })
+  @Column({ type: 'uuid' })
+  salaId: string;
+
   @ApiProperty({ description: 'Sala a la que pertenece el sector', type: () => Sala })
   @ManyToOne(() => Sala, (sala) => sala.sectores)
+  @JoinColumn({ name: 'salaId' })
   sala: Sala;
 
   @ApiProperty({ description: 'Nombre del sector', maxLength: 50 })
@@ -43,8 +49,13 @@ export class Sector {
   @IsOptional()
   discount?: number;
 
+  @ApiProperty({ description: 'ID del estado del sector', type: 'integer' })
+  @Column({ type: 'int' })
+  statusId: number;
+
   @ApiProperty({ description: 'Estado del sector', type: () => SectorStatus })
   @ManyToOne(() => SectorStatus, (status) => status.sectores)
+  @JoinColumn({ name: 'statusId' })
   status: SectorStatus;
 
   @ApiProperty({ description: 'Butacas del sector', type: () => [Butaca], required: false })

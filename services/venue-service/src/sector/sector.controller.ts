@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { SectorService } from './sector.service';
 import { CreateSectorDto } from './dto/create-sector.dto';
@@ -44,5 +45,10 @@ export class SectorController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.sectorService.remove(id);
+  }
+
+  @Get('bySala/:salaId')
+  findBySala(@Param('salaId') salaId: string) {
+    return this.sectorService.findBySala(salaId);
   }
 }

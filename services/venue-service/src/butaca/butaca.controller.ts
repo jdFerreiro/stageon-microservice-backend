@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ButacaService } from './butaca.service';
 import { CreateButacaDto } from './dto/create-butaca.dto';
@@ -23,6 +24,7 @@ export class ButacaController {
 
   @Post()
   create(@Body() createButacaDto: CreateButacaDto) {
+    console.log('datos butaca', createButacaDto);
     return this.butacaService.create(createButacaDto);
   }
 
@@ -44,5 +46,10 @@ export class ButacaController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.butacaService.remove(id);
+  }
+
+  @Get('bySector/:sectorId')
+  findBySector(@Param('sectorId') sectorId: string) {
+    return this.butacaService.findBySector(sectorId);
   }
 }

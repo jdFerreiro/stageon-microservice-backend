@@ -7,6 +7,8 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
+  NotFoundException,
 } from '@nestjs/common';
 import { SalaService } from './sala.service';
 import { CreateSalaDto } from './dto/create-sala.dto';
@@ -44,5 +46,10 @@ export class SalaController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.salaService.remove(id);
+  }
+
+  @Get('byTeatro/:teatroId')
+  findByTeatro(@Param('teatroId') teatroId: string) {
+    return this.salaService.findByTeatro(teatroId);
   }
 }
