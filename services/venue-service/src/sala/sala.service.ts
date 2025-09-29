@@ -36,7 +36,7 @@ export class SalaService {
   }
 
   async findAll() {
-    return this.salaRepo.find({ relations: ['teatro'] });
+    return this.salaRepo.find({ relations: ['teatro', 'sectores', 'sectores.butacas'] });
   }
 
   async findOne(id: string) {
