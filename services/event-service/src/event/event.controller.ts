@@ -1,37 +1,60 @@
-import { Controller, Get, Post, Put, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 import { EventService } from './event.service';
 import { Event } from '../entities/event.entity';
+import { EventDto } from './dto/event.dto';
 
+@ApiTags('Eventos')
+@ApiBearerAuth('jwt')
+@UseGuards(AuthGuard('jwt'))
 @Controller('events')
 export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Obtener todos los eventos' })
+  @ApiResponse({ status: 200, description: 'Lista de eventos', type: [EventDto] })
   findAll(): Promise<Event[]> {
     return this.eventService.findAll();
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener un evento por ID' })
+  @ApiParam({ name: 'id', description: 'ID del evento', example: 'b1a2c3d4-e5f6-7890-abcd-1234567890ab' })
+  @ApiResponse({ status: 200, description: 'Evento encontrado', type: EventDto })
   findOne(@Param('id') id: string): Promise<Event | null> {
     return this.eventService.findOne(id);
   }
 
   @Post()
-  create(@Body() data: Partial<Event>): Promise<Event> {
+  @ApiOperation({ summary: 'Crear un nuevo evento' })
+  @ApiBody({ type: EventDto })
+  @ApiResponse({ status: 201, description: 'Evento creado', type: EventDto })
+  create(@Body() data: EventDto): Promise<Event> {
     return this.eventService.create(data);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() data: Partial<Event>): Promise<Event | null> {
+  @ApiOperation({ summary: 'Actualizar un evento existente' })
+  @ApiParam({ name: 'id', description: 'ID del evento', example: 'b1a2c3d4-e5f6-7890-abcd-1234567890ab' })
+  @ApiBody({ type: EventDto })
+  @ApiResponse({ status: 200, description: 'Evento actualizado', type: EventDto })
+  update(@Param('id') id: string, @Body() data: EventDto): Promise<Event | null> {
     return this.eventService.update(id, data);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar un evento por ID' })
+  @ApiParam({ name: 'id', description: 'ID del evento', example: 'b1a2c3d4-e5f6-7890-abcd-1234567890ab' })
+  @ApiResponse({ status: 204, description: 'Evento eliminado' })
   remove(@Param('id') id: string): Promise<void> {
     return this.eventService.remove(id);
   }
 
   @Get('/statuses/all')
+  @ApiOperation({ summary: 'Obtener todos los estatus de evento' })
+  @ApiResponse({ status: 200, description: 'Lista de estatus', type: [Object] })
   getStatuses() {
     return this.eventService.getStatuses();
   }

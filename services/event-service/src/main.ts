@@ -25,7 +25,7 @@ async function bootstrap() {
   // Swagger config
   const config = new DocumentBuilder()
     .setTitle('Events Service API')
-    .setDescription('API documentation for Venue Service')
+    .setDescription('API documentation for Event Service')
     .setVersion('1.0')
     .addBearerAuth(
       {
