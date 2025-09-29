@@ -29,11 +29,16 @@ export class ButacaService {
   }
 
   async findAll() {
-    return await this.repo.find();
+    return await this.repo.find({
+      relations: ['status'],
+    });
   }
 
   async findOne(id: string) {
-    const butaca = await this.repo.findOneBy({ id });
+    const butaca = await this.repo.findOne({
+      where: { id },
+      relations: ['status'],
+    });
     if (!butaca) {
       throw new NotFoundException(`ButacaEstado with id ${id} not found`);
     }
@@ -59,7 +64,7 @@ export class ButacaService {
   async findBySector(sectorId: string) {
     return this.repo.find({
       where: { sector: { id: sectorId } },
-      relations: ['sector'],
+      relations: ['status'],
     });
   }
 }
