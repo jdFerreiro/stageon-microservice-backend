@@ -5,9 +5,6 @@ export class FunctionStatus {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 50, unique: true })
   name: string; // Ej: 'scheduled', 'in_progress', 'finished', 'cancelled', etc.
-
-  @Column({ nullable: true })
-  description?: string;
 }

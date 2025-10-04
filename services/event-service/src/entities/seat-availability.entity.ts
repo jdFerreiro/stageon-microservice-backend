@@ -32,6 +32,6 @@ export class SeatAvailability {
   @JoinColumn({ name: 'statusId' })
   status: SeatAvailabilityStatus;
 
-  @Column({ nullable: true })
+  @Column({type: 'varchar', length: 255, nullable: true })
   reason?: string; // Motivo del bloqueo o restricción
 }

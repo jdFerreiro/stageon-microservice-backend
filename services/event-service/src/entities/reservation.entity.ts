@@ -20,14 +20,15 @@ export class Reservation {
   @Column({ type: 'uuid' })
   venueId: string; // Referencia a la sala (Venue Service)
 
-  @Column()
+  @Column( { type: 'uuid' })
   userId: string; // Referencia al usuario que reserva
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   reservedAt: Date;
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   isPaid: boolean;
+
   @Column({ type: 'int', nullable: true })
   statusId?: number;
 

@@ -9,6 +9,7 @@ import { FunctionModule } from './function/function.module';
 import { ReservationModule } from './reservation/reservation.module';
 import { SeatAvailabilityModule } from './seat-availability/seat-availability.module';
 import { AuthModule } from './auth/auth.module';
+import { GenreModule } from './genre/genre.module';
 import { Event } from './entities/event.entity';
 import { EventStatus } from './entities/event-status.entity';
 import { FunctionEntity } from './entities/function.entity';
@@ -73,7 +74,8 @@ import { SeatAvailabilityStatus } from './entities/seat-availability-status.enti
     FunctionModule,
     ReservationModule,
     SeatAvailabilityModule,
-    AuthModule,
+  AuthModule,
+  GenreModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Event } from '../entities/event.entity';
 import { EventStatus } from '../entities/event-status.entity';
+import { EventDto } from './dto/event.dto';
 
 @Injectable()
 export class EventService {
@@ -15,19 +16,19 @@ export class EventService {
 
   // Métodos CRUD para Event
   async findAll(): Promise<Event[]> {
-    return this.eventRepository.find({ relations: ['status'] });
+    return this.eventRepository.find({ relations: ['status', 'genre'] });
   }
 
   async findOne(id: string): Promise<Event | null> {
-    return this.eventRepository.findOne({ where: { id }, relations: ['status'] });
+    return this.eventRepository.findOne({ where: { id }, relations: ['status', 'genre'] });
   }
 
-  async create(data: Partial<Event>): Promise<Event> {
+  async create(data: EventDto): Promise<Event> {
     const event = this.eventRepository.create(data);
     return this.eventRepository.save(event);
   }
 
-  async update(id: string, data: Partial<Event>): Promise<Event | null> {
+  async update(id: string, data: EventDto): Promise<Event | null> {
     await this.eventRepository.update(id, data);
     return this.findOne(id);
   }

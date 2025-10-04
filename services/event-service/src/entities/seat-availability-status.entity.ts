@@ -5,9 +5,6 @@ export class SeatAvailabilityStatus {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 50, unique: true })
   name: string; // Ej: 'available', 'blocked', 'reserved', 'not_for_sale', etc.
-
-  @Column({ nullable: true })
-  description?: string;
 }

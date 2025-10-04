@@ -14,7 +14,7 @@ export class EventController {
 
   @Get()
   @ApiOperation({ summary: 'Obtener todos los eventos' })
-  @ApiResponse({ status: 200, description: 'Lista de eventos', type: [EventDto] })
+  @ApiResponse({ status: 200, description: 'Lista de eventos', type: [Event] })
   findAll(): Promise<Event[]> {
     return this.eventService.findAll();
   }
@@ -22,7 +22,7 @@ export class EventController {
   @Get(':id')
   @ApiOperation({ summary: 'Obtener un evento por ID' })
   @ApiParam({ name: 'id', description: 'ID del evento', example: 'b1a2c3d4-e5f6-7890-abcd-1234567890ab' })
-  @ApiResponse({ status: 200, description: 'Evento encontrado', type: EventDto })
+  @ApiResponse({ status: 200, description: 'Evento encontrado', type: Event })
   findOne(@Param('id') id: string): Promise<Event | null> {
     return this.eventService.findOne(id);
   }
@@ -30,8 +30,9 @@ export class EventController {
   @Post()
   @ApiOperation({ summary: 'Crear un nuevo evento' })
   @ApiBody({ type: EventDto })
-  @ApiResponse({ status: 201, description: 'Evento creado', type: EventDto })
-  create(@Body() data: EventDto): Promise<Event> {
+  @ApiResponse({ status: 201, description: 'Evento creado', type: Event })
+  async create(@Body() data: EventDto) {
+    console.log(data); // Debe mostrar el objeto recibido
     return this.eventService.create(data);
   }
 
@@ -39,7 +40,7 @@ export class EventController {
   @ApiOperation({ summary: 'Actualizar un evento existente' })
   @ApiParam({ name: 'id', description: 'ID del evento', example: 'b1a2c3d4-e5f6-7890-abcd-1234567890ab' })
   @ApiBody({ type: EventDto })
-  @ApiResponse({ status: 200, description: 'Evento actualizado', type: EventDto })
+  @ApiResponse({ status: 200, description: 'Evento actualizado', type: Event })
   update(@Param('id') id: string, @Body() data: EventDto): Promise<Event | null> {
     return this.eventService.update(id, data);
   }

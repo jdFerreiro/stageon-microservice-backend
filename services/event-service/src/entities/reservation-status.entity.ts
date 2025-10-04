@@ -5,9 +5,6 @@ export class ReservationStatus {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar', length: 50, unique: true })
   name: string; // Ej: 'pending', 'confirmed', 'cancelled', 'expired', etc.
-
-  @Column({ nullable: true })
-  description?: string;
 }

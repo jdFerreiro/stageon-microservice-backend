@@ -23,7 +23,7 @@ export class FunctionEntity {
   @Column({ type: 'timestamp' })
   endTime: Date;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   language?: string;
 
   @Column({ nullable: true })
