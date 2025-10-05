@@ -41,4 +41,12 @@ export class EventService {
   async getStatuses(): Promise<EventStatus[]> {
     return this.eventStatusRepository.find();
   }
+  
+  // Obtener eventos por club
+  async findByClub(clubId: string): Promise<Event[]> {
+    return this.eventRepository.find({
+      where: { clubId },
+      relations: ['status', 'genre'],
+    });
+  }
 }

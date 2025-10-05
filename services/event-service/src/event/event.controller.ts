@@ -59,4 +59,12 @@ export class EventController {
   getStatuses() {
     return this.eventService.getStatuses();
   }
+
+    @Get('/club/:clubId')
+    @ApiOperation({ summary: 'Obtener eventos por club' })
+    @ApiParam({ name: 'clubId', description: 'ID del club', example: 'b1a2c3d4-e5f6-7890-abcd-1234567890ab' })
+    @ApiResponse({ status: 200, description: 'Lista de eventos del club', type: [Event] })
+    findByClub(@Param('clubId') clubId: string): Promise<Event[]> {
+      return this.eventService.findByClub(clubId);
+    }
 }

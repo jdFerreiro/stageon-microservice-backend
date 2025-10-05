@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FunctionEntity } from '../entities/function.entity';
 import { FunctionStatus } from '../entities/function-status.entity';
+import { toLocalISOString } from './date-utils';
 
 @Injectable()
 export class FunctionService {
@@ -14,20 +15,49 @@ export class FunctionService {
   ) {}
 
   async findByVenue(venueId: string): Promise<FunctionEntity[]> {
-    return this.functionRepository.find({ where: { venueId }, relations: ['status'] });
+    const functions = await this.functionRepository.find({ where: { venueId }, relations: ['status'] });
+    return functions.map(f => ({
+      ...f,
+      startTime: toLocalISOString(f.startTime),
+      endTime: toLocalISOString(f.endTime),
+      preSaleStart: toLocalISOString(f.preSaleStart),
+      preSaleEnd: toLocalISOString(f.preSaleEnd),
+    }));
   }
 
   async findAll(): Promise<FunctionEntity[]> {
-    return this.functionRepository.find({ relations: ['status'] });
+    const functions = await this.functionRepository.find({ relations: ['status'] });
+    return functions.map(f => ({
+      ...f,
+      startTime: toLocalISOString(f.startTime),
+      endTime: toLocalISOString(f.endTime),
+      preSaleStart: toLocalISOString(f.preSaleStart),
+      preSaleEnd: toLocalISOString(f.preSaleEnd),
+    }));
   }
 
   async findOne(id: string): Promise<FunctionEntity | null> {
-    return this.functionRepository.findOne({ where: { id }, relations: ['status'] });
+    const f = await this.functionRepository.findOne({ where: { id }, relations: ['status'] });
+    if (!f) return null;
+    return {
+      ...f,
+      startTime: toLocalISOString(f.startTime),
+      endTime: toLocalISOString(f.endTime),
+      preSaleStart: toLocalISOString(f.preSaleStart),
+      preSaleEnd: toLocalISOString(f.preSaleEnd),
+    };
   }
 
   async create(data: Partial<FunctionEntity>): Promise<FunctionEntity> {
     const func = this.functionRepository.create(data);
-    return this.functionRepository.save(func);
+    const saved = await this.functionRepository.save(func);
+    return {
+      ...saved,
+      startTime: toLocalISOString(saved.startTime),
+      endTime: toLocalISOString(saved.endTime),
+      preSaleStart: toLocalISOString(saved.preSaleStart),
+      preSaleEnd: toLocalISOString(saved.preSaleEnd),
+    };
   }
 
   async update(id: string, data: Partial<FunctionEntity>): Promise<FunctionEntity | null> {
