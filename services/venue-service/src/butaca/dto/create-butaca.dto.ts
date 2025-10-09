@@ -11,10 +11,9 @@ export class CreateButacaDto {
   @MaxLength(10)
   row: string;
 
-  @ApiProperty({ description: 'Número de la butaca', maxLength: 10 })
-  @IsString()
-  @MaxLength(10)
-  number: string;
+  @ApiProperty({ description: 'Número de la butaca', type: 'number' })
+  @IsNumber()
+  number: number;
 
   @ApiProperty({ description: 'ID del estado de la butaca' })
   @IsNumber()

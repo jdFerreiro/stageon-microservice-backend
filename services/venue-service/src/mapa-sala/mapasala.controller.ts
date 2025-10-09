@@ -1,4 +1,4 @@
-import {
+ import {
   Controller,
   Get,
   Post,
@@ -20,6 +20,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 @Controller('mapasala')
 export class MapaSalaController {
   constructor(private readonly mapasalaService: MapaSalaService) {}
+
 
   @Post()
   create(@Body() createMapaSalaDto: CreateMapaSalaDto) {
@@ -47,5 +48,10 @@ export class MapaSalaController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.mapasalaService.remove(id);
+  }
+
+  @Get('sala/:salaId')
+  findBySala(@Param('salaId') salaId: string) {
+    return this.mapasalaService.findBySala(salaId);
   }
 }

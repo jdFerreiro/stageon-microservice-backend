@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Sala } from './sala.entity';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -9,15 +9,16 @@ export class MapaSala {
   id: string;
 
   @ApiProperty({ description: 'Sala asociada al mapa', type: () => Sala })
-  @ManyToOne(() => Sala)
+  @ManyToOne(() => Sala, { eager: false })
+  @JoinColumn({ name: 'salaId' })
   sala: Sala;
 
-  @ApiProperty({ description: 'URL de la imagen del mapa', required: false })
-  @Column({ nullable: true })
+  @ApiProperty({ description: 'URL de la imagen del mapa', required: false, maxLength: 4294967295 })
+  @Column({ nullable: true, type: 'longtext' })
   imageUrl: string;
 
-  @ApiProperty({ description: 'Datos del mapa (coordenadas JSON/SVG de las butacas)', type: 'string', required: false })
-  @Column({ type: 'json', nullable: true })
+  @ApiProperty({ description: 'Datos del mapa (coordenadas JSON/SVG de las butacas)', type: 'string', required: false, maxLength: 4294967295 })
+  @Column({ type: 'longtext', nullable: true })
   mapData: string; // coordenadas JSON/SVG de las butacas
 
   @ApiProperty({ description: 'Versión del mapa', default: 1 })
