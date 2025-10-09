@@ -16,12 +16,13 @@ export class FunctionService {
 
   async findByVenue(venueId: string): Promise<FunctionEntity[]> {
     const functions = await this.functionRepository.find({ where: { venueId }, relations: ['status'] });
+    
     return functions.map(f => ({
       ...f,
-      startTime: toLocalISOString(f.startTime),
-      endTime: toLocalISOString(f.endTime),
-      preSaleStart: toLocalISOString(f.preSaleStart),
-      preSaleEnd: toLocalISOString(f.preSaleEnd),
+      startTime: f.startTime,
+      endTime: f.endTime,
+      preSaleStart: f.preSaleStart,
+      preSaleEnd: f.preSaleEnd,
     }));
   }
 
@@ -29,10 +30,10 @@ export class FunctionService {
     const functions = await this.functionRepository.find({ relations: ['status'] });
     return functions.map(f => ({
       ...f,
-      startTime: toLocalISOString(f.startTime),
-      endTime: toLocalISOString(f.endTime),
-      preSaleStart: toLocalISOString(f.preSaleStart),
-      preSaleEnd: toLocalISOString(f.preSaleEnd),
+      startTime: f.startTime,
+      endTime: f.endTime,
+      preSaleStart: f.preSaleStart,
+      preSaleEnd: f.preSaleEnd,
     }));
   }
 
@@ -41,10 +42,10 @@ export class FunctionService {
     if (!f) return null;
     return {
       ...f,
-      startTime: toLocalISOString(f.startTime),
-      endTime: toLocalISOString(f.endTime),
-      preSaleStart: toLocalISOString(f.preSaleStart),
-      preSaleEnd: toLocalISOString(f.preSaleEnd),
+      startTime: f.startTime,
+      endTime: f.endTime,
+      preSaleStart: f.preSaleStart,
+      preSaleEnd: f.preSaleEnd,
     };
   }
 
@@ -53,10 +54,10 @@ export class FunctionService {
     const saved = await this.functionRepository.save(func);
     return {
       ...saved,
-      startTime: toLocalISOString(saved.startTime),
-      endTime: toLocalISOString(saved.endTime),
-      preSaleStart: toLocalISOString(saved.preSaleStart),
-      preSaleEnd: toLocalISOString(saved.preSaleEnd),
+      startTime: saved.startTime,
+      endTime: saved.endTime,
+      preSaleStart: saved.preSaleStart,
+      preSaleEnd: saved.preSaleEnd,
     };
   }
 

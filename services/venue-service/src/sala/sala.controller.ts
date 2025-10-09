@@ -38,7 +38,7 @@ export class SalaController {
     return this.salaService.findOne(id);
   }
 
-  @Patch(':id')
+   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSalaDto: UpdateSalaDto) {
     return this.salaService.update(id, updateSalaDto);
   }
@@ -52,4 +52,11 @@ export class SalaController {
   findByTeatro(@Param('teatroId') teatroId: string) {
     return this.salaService.findByTeatro(teatroId);
   }
+
+  @Get('byClub/:clubId')
+  findByClub(@Param('clubId') clubId: string) {
+    return this.salaService.findByClub(clubId);
+  }
+
+
 }

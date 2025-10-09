@@ -14,15 +14,22 @@ export class Butaca {
   @ManyToOne(() => Sector, (sector) => sector.butacas)
   sector: Sector;
 
-  @ApiProperty({ description: 'Fila de la butaca', maxLength: 10 })
+  @ApiProperty({ description: 'Fila de la butaca', maxLength: 2 })
   @Column()
   @MaxLength(10)
   row: string;
 
-  @ApiProperty({ description: 'Número de la butaca', maxLength: 10 })
+  @ApiProperty({ description: 'Número de la butaca' })
   @Column()
-  @MaxLength(10)
-  number: string;
+  number: number;
+    
+  @ApiProperty({ description: 'Posición X' })
+  @Column()
+  pos_x: string;
+
+  @ApiProperty({ description: 'Posición Y' })
+  @Column()
+  pos_y: string;
 
   @ApiProperty({ description: 'Estado de la butaca', type: () => ButacaStatus })
   @ManyToOne(() => ButacaStatus, (status) => status.butacas)

@@ -16,6 +16,10 @@ async function bootstrap() {
     passphrase: process.env.PFX_PASSPHRASE || '',
   };
   const app = await NestFactory.create(AppModule, { httpsOptions });
+  // Aumentar el límite de tamaño permitido para el cuerpo de la petición
+  const express = require('express');
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));
   // Habilitar CORS
   app.enableCors({
     origin: '*', // Cambia esto por el dominio que desees permitir en producción
