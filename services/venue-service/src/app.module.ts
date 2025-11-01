@@ -18,6 +18,7 @@ import { SectorController } from './sector/sector.controller';
 import { SectorEstadoController } from './sector-estado/sector-estado.controller';
 import { AuthModule } from './auth/auth.module';
 import { UserContextModule } from './auth/User/user-context.module';
+import { JobsModule } from './jobs/jobs.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { UserContextModule } from './auth/User/user-context.module';
     SalaModule,
     SectorModule,
     SectorEstadoModule,
+    JobsModule,
   ],
   controllers: [
     ButacaEstadoController,

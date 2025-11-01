@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MapaSala } from '../entities/mapa-sala.entity';
 import { Sala } from '../entities/sala.entity';
 import { Repository } from 'typeorm';
+import { InjectQueue } from '@nestjs/bullmq';
+import { Queue } from 'bullmq';
 
 @Injectable()
 export class MapaSalaService {
@@ -13,6 +15,8 @@ export class MapaSalaService {
     private readonly mapasalaRepo: Repository<MapaSala>,
     @InjectRepository(Sala)
     private readonly salaRepo: Repository<Sala>,
+    @InjectQueue('mapa-sala')
+    private readonly mapaSalaQueue: Queue,
   ) {}
 
   async create(createMapaSalaDto: CreateMapaSalaDto) {
@@ -26,7 +30,24 @@ export class MapaSalaService {
       ...createMapaSalaDto,
       sala,
     });
-    return this.mapasalaRepo.save(mapasala);
+    const savedMapaSala = await this.mapasalaRepo.save(mapasala);
+
+    // Validar el contenido de mapData antes de lanzar el job
+    try {
+      const base64Data = createMapaSalaDto.mapData.split(',')[1] || createMapaSalaDto.mapData;
+      console.log(createMapaSalaDto.mapData);
+      const jsonStr = Buffer.from(base64Data, 'base64').toString('utf8');
+      JSON.parse(jsonStr);
+    } catch (e) {
+      throw new Error('El campo mapData no contiene un JSON válido en base64.');
+    }
+
+    // Lanzar el job en background para procesar el mapa
+    await this.mapaSalaQueue.add('process', {
+      mapaSalaId: savedMapaSala.id,
+      base64: createMapaSalaDto.mapData,
+    });
+    return savedMapaSala;
   }
 
   async findAll() {
